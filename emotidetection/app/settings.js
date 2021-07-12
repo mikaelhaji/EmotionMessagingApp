@@ -24,12 +24,7 @@ export const settings = {
         //         "style":"\n position: block;\n z-index: 9;\n "
         // },
         connect: {
-        filter: [
-                "Muse 2"
-                , 'OpenBCI Cyton'
-                ],
-        toggle: 'musebutton',
-        autoselect: {device: 'Muse 2'},
+        toggle: 'devicebutton',
         onconnect: () => {
                 settings.graph.nodes.find(n => {
                 if (n.id === 'ui'){
