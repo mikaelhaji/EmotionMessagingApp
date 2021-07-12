@@ -1,9 +1,19 @@
-const io = require('socket.io')(3000)
+// const io = require('socket.io')(3000)
+// io.set('origins', 'http://127.0.0.1:5500/Realtime-Simple-Chat-App-master');
+const httpServer = require("http").createServer();
+
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 const users = {}
 
 io.on('connection', socket => {
   socket.on('new-user', name => {
+    console.log(name)
     users[socket.id] = name
     socket.broadcast.emit('user-connected', name)
   })
@@ -15,3 +25,5 @@ io.on('connection', socket => {
     delete users[socket.id]
   })
 })
+
+httpServer.listen(3000);
