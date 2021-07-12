@@ -12,6 +12,7 @@ socket.on('chat-message', data => {
 })
 
 socket.on('user-connected', name => {
+  console.log(name)
   appendMessage(`${name} connected`)
 })
 
