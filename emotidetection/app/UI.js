@@ -30,11 +30,7 @@ class UI{
         let HTMLtemplate = () => {return `
             <div id='${this.props.id}' style='height:100%; width:100%; display: flex; align-items: center; justify-content: center;'>
                 <div>
-<<<<<<< HEAD
-                    <button id="musebutton" class="brainsatplay-default-button">Device Manager</button>
-=======
                     <button id="devicebutton" class="brainsatplay-default-button">Open Device Manager</button>
->>>>>>> 7fb55571cf696c22993b37e89cfaef223bdae964
                     <input type='file' id="${this.props.id}load"></input>
                 </div>
             </div>`
