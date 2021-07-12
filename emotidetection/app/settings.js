@@ -28,8 +28,7 @@ export const settings = {
                 "Muse 2"
                 , 'OpenBCI Cyton'
                 ],
-        toggle: 'musebutton',
-        autoselect: {device: 'Muse 2'},
+        toggle: 'devicebutton',
         onconnect: () => {
                 settings.graph.nodes.find(n => {
                 if (n.id === 'ui'){
