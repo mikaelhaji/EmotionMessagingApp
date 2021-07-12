@@ -25,6 +25,10 @@ export const settings = {
         // },
         connect: {
         toggle: 'devicebutton',
+        filter: [
+                "Muse 2"
+                , "Cyton"
+                ],
         onconnect: () => {
                 settings.graph.nodes.find(n => {
                 if (n.id === 'ui'){
