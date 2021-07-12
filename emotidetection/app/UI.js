@@ -13,10 +13,11 @@ class UI{
         this.props = {
             id: String(Math.floor(Math.random()*1000000)),
             timestamps: {
+                startEEG: null,
                 start: null,
                 stop: null
             },
-            video: null
+            message: null
         }
 
         // Port Definition
@@ -40,7 +41,7 @@ class UI{
         let setupHTML = () => {
             let load = document.getElementById(`${this.props.id}load`)
             load.onchange = (res) => {
-                this._handleVideoLoad(load.files[0])
+                this._handleVideoLoad(load.files[0]) //CHANGE THIS STUFF ASAP
             }
         }
 
@@ -54,14 +55,14 @@ class UI{
 
     deinit = () => {}
 
-    _handleVideoLoad = (file) => {
-        this.props.timestamps.start = Date.now()
-        this.props.video = file
-        console.log(video)
+    _initMessage = (message) => {
+        this.props.timestamps.start = Date.now() - 10*1000
+        this.props.message = message
+        console.log(message)
 
     }
 
-    _onVideoStop = () => {
+    _onMessageSend = () => {
          // Detect when Video Stops
          this.props.timestamps.stop = Date.now()
 
@@ -74,7 +75,7 @@ class UI{
          let body = {
              data, 
              timestamps: this.props.timestamps,
-             video: this.props.video
+             message: this.props.message
          }
  
          // Send to server
@@ -92,6 +93,7 @@ class UI{
         let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="devicebutton"]`)
         museButton.style.display = 'none'
         this._onVideoStop()
+        this.props.timestamps.startEEG =  Date.now()
     }
 }
 export {UI}
