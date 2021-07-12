@@ -89,7 +89,7 @@ class UI{
     }
 
     _deviceConnected = () => {
-        let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="musebutton"]`)
+        let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="devicebutton"]`)
         museButton.style.display = 'none'
         this._onVideoStop()
     }
