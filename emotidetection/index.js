@@ -1,4 +1,3 @@
-import {settings} from './app/settings.mjs'
-import * as brainsatplay from 'brainsatplay'
+import {settings} from './app/settings.js'
 let app =  new brainsatplay.Application(settings)
 app.init()
