@@ -1,5 +1,3 @@
-
-
 import {UI} from './UI.js'
 
 export const settings = {
