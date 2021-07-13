@@ -28,19 +28,97 @@ class UI{
     init = () => {
         // Simply define the HTML template
         let HTMLtemplate = () => {return `
-            <div id='${this.props.id}' style='height:100%; width:100%; display: flex; align-items: center; justify-content: center;'>
-                <div>
-                    <button id="devicebutton" class="brainsatplay-default-button">Open Device Manager</button>
-                    <input type='file' id="${this.props.id}load"></input>
-                </div>
-            </div>`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="X-UA-Compatible" content="ie=edge">
+          <title>Chat App</title>
+          <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+          <style>
+            body {
+              padding: 0;
+              margin: 0;
+              display: flex;
+              justify-content: center;
+            }
+        
+            #message-container {
+              width: 80%;
+              max-width: 1200px;
+            }
+        
+            #message-container div {
+              background-color: #CCC;
+              padding: 5px;
+            }
+        
+            #message-container div:nth-child(2n) {
+              background-color: #FFF;
+            }
+        
+            #send-container {
+              position: fixed;
+              padding-bottom: 30px;
+              bottom: 0;
+              background-color: white;
+              max-width: 1200px;
+              width: 80%;
+              display: flex;
+            }
+        
+            #message-input {
+              flex-grow: 1;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="message-container"></div>
+          <form id="send-container">
+            <input type="text" id="message-input">
+            <button type="submit" id="send-button">Send</button>
+          </form>
+        </body>
+        </html>`
         }
 
 
         let setupHTML = () => {
-            let load = document.getElementById(`${this.props.id}load`)
-            load.onchange = (res) => {
-                this._handleVideoLoad(load.files[0])
+            const socket = io('http://localhost:3000')
+            const messageContainer = document.getElementById('message-container')
+            const messageForm = document.getElementById('send-container')
+            const messageInput = document.getElementById('message-input')
+
+            const name = prompt('What is your name?')
+            appendMessage('You joined')
+            socket.emit('new-user', name)
+
+            socket.on('chat-message', data => {
+            appendMessage(`${data.name}: ${data.message}`)
+            })
+
+            socket.on('user-connected', name => {
+            console.log(name)
+            appendMessage(`${name} connected`)
+            })
+
+            socket.on('user-disconnected', name => {
+            appendMessage(`${name} disconnected`)
+            })
+
+            messageForm.addEventListener('submit', e => {
+            e.preventDefault()
+            const message = messageInput.value
+            appendMessage(`You: ${message}`)
+            socket.emit('send-chat-message', message)
+            messageInput.value = ''
+            })
+
+            function appendMessage(message) {
+            const messageElement = document.createElement('div')
+            messageElement.innerText = message
+            messageContainer.append(messageElement)
             }
         }
 
