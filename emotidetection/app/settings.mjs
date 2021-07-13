@@ -1,6 +1,6 @@
 
 
-import {UI} from './UI.js'
+import {UI} from './UI.mjs'
 
 export const settings = {
         name: "Emotion Detection Messaging App",
