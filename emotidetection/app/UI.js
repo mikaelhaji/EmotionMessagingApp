@@ -19,7 +19,7 @@ class UI{
             video: null
         }
 
-        this.io = io('http://localhost:3000'),
+        // this.io = null,
 
         // Port Definition
         this.ports = {
@@ -38,6 +38,9 @@ class UI{
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <title>Chat App</title>
           <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+          <script>
+            this.io = io(http://localhost:3000);
+          </script>
           <style>
             body {
               padding: 0;
@@ -87,13 +90,52 @@ class UI{
 
 
         let setupHTML = () => {
-            const socket = this.io
-            const messageContainer = document.getElementById('message-container')
-            const messageForm = document.getElementById('send-container')
-            const messageInput = document.getElementById('message-input')
+            // const io = require("socket.io-client");
+            // import { io } from "http://localhost:3000/socket.io/socket.io.js";
 
-            const name = prompt('What is your name?')
-            appendMessage('You joined')
+            setTimeout(() => {
+
+              // const socket = io('http://localhost:3000')
+              const socket = this.io
+              // console.log(socket)
+              this.messageContainer = document.getElementById('message-container')
+              const messageForm = document.getElementById('send-container')
+              const messageInput = document.getElementById('message-input')
+              
+              const name = prompt('What is your name?')
+              this._appendMessage('You joined')
+              socket.emit('new-user', name)
+
+              socket.on('chat-message', data => {
+              this._appendMessage(`${data.name}: ${data.message}`)
+              })
+
+              socket.on('user-connected', name => {
+              console.log(name)
+              this._appendMessage(`${name} connected`)
+              })
+
+              socket.on('user-disconnected', name => {
+              this._appendMessage(`${name} disconnected`)
+              })
+
+              messageForm.addEventListener('submit', e => {
+              e.preventDefault()
+              const message = messageInput.value
+              this._appendMessage(`You: ${message}`)
+              socket.emit('send-chat-message', message)
+              messageInput.value = ''
+              })
+            
+            }, 1000)
+
+            // const socket = io('http://localhost:3000')
+            // const messageContainer = document.getElementById('message-container')
+            // const messageForm = document.getElementById('send-container')
+            // const messageInput = document.getElementById('message-input')
+
+            // const name = prompt('What is your name?')
+            // appendMessage('You joined')
             // socket.emit('new-user', name)
 
             // socket.on('chat-message', data => {
@@ -117,11 +159,6 @@ class UI{
             // messageInput.value = ''
             // })
 
-            function appendMessage(message) {
-            const messageElement = document.createElement('div')
-            messageElement.innerText = message
-            messageContainer.append(messageElement)
-            }
         }
 
 
@@ -140,6 +177,12 @@ class UI{
         console.log(video)
 
     }
+
+    _appendMessage = (message) => {
+      const messageElement = document.createElement('div')
+      messageElement.innerText = message
+      this.messageContainer.append(messageElement)
+      }
 
     _onVideoStop = () => {
          // Detect when Video Stops
