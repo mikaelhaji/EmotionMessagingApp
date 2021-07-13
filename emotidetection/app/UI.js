@@ -37,10 +37,7 @@ class UI{
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <title>Chat App</title>
-          <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
-          <script>
-            this.io = io(http://localhost:3000);
-          </script>
+          <script src="https://cdn.socket.io/4.1.2/socket.io.min.js" integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+Rg" crossorigin="anonymous"></script>
           <style>
             body {
               padding: 0;
@@ -95,9 +92,9 @@ class UI{
 
             setTimeout(() => {
 
-              // const socket = io('http://localhost:3000')
-              const socket = this.io
-              // console.log(socket)
+              const socket = io('http://localhost:3000')
+              // const socket = this.io
+              console.log(socket)
               this.messageContainer = document.getElementById('message-container')
               const messageForm = document.getElementById('send-container')
               const messageInput = document.getElementById('message-input')
