@@ -12,12 +12,10 @@ CORS(app)
 def form_example():
     if request.method == 'POST':
 
-        request_stamps = json.loads(request.form.get('timestamps'))
-        request_data = json.loads(request.form.get('data'))
+        request_data = request.get_json()
 
-        print("elapsed time: {}".format(int(int(request_stamps["stop"])-int(request_stamps["startVideo"]))/1000))
+        # print("elapsed time: {}".format(int(int(request_stamps["stop"])-int(request_stamps["startVideo"]))/1000))
 
-        print(request_stamps)
         print(len(request_data))
 
         # Note: when the request objects are saved, page refreshes
