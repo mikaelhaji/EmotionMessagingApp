@@ -14,6 +14,7 @@ class UI{
         this.props = {
             id: String(Math.floor(Math.random()*1000000)),
             timestamps: {
+                startEEG: null,
                 start: null,
                 stop: null
             },
@@ -128,11 +129,26 @@ class UI{
               this._appendMessage(`${name} disconnected`)
               })
 
+              messageInput.addEventListener('input', (e) => {
+                if (e.target.value !== '') {
+                  if (e.target.value.length == 1) { // potential error
+                    console.log('start message');
+                    this.props.timestamps.start = Date.now()
+                  }
+                }
+                else {
+                  console.log('nothing in box');
+                  this.props.timestamps.start = null
+                }
+              })
+              
+
               messageForm.addEventListener('submit', e => {
               e.preventDefault()
               const message = messageInput.value
               this._appendMessage(`You: ${message}`)
               socket.emit('send-chat-message', message)
+              this._onMessageSend()
               messageInput.value = ''
               })
             
@@ -193,7 +209,7 @@ class UI{
       this.messageContainer.append(messageElement)
       }
 
-    _onVideoStop = () => {
+    _onMessageSend = () => {
          // Detect when Video Stops
          this.props.timestamps.stop = Date.now()
 
@@ -202,15 +218,15 @@ class UI{
          let data = this.session.atlas.data.eeg
          console.log(data)
  
-         let url = ''
+         let url = 'http://127.0.0.1:5000/emotions'
          let body = {
              data, 
              timestamps: this.props.timestamps,
-             video: this.props.video
          }
  
          // Send to server
-         fetch(url, {method: 'POST', body}).then(res => {
+         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/"} })
+        .then(res => {
  
              // Get Video Back
              console.log(res)
@@ -223,7 +239,7 @@ class UI{
     _deviceConnected = () => {
         let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="musebutton"]`)
         museButton.style.display = 'none'
-        this._onVideoStop()
+        this.props.timestamps.startEEG =  Date.now()
     }
 }
 export {UI}
