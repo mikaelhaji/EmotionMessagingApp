@@ -51,44 +51,10 @@ class UI{
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <title>Chat App</title>
           // <script src="https://cdn.socket.io/4.1.2/socket.io.min.js" integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+Rg" crossorigin="anonymous"></script>
-          <style>
-            body {
-              padding: 0;
-              margin: 0;
-              display: flex;
-              justify-content: center;
-            }
-        
-            #message-container {
-              width: 80%;
-              max-width: 1200px;
-            }
-        
-            #message-container div {
-              background-color: #CCC;
-              padding: 5px;
-            }
-        
-            #message-container div:nth-child(2n) {
-              background-color: #FFF;
-            }
-        
-            #send-container {
-              position: fixed;
-              padding-bottom: 30px;
-              bottom: 0;
-              background-color: white;
-              max-width: 1200px;
-              width: 80%;
-              display: flex;
-            }
-        
-            #message-input {
-              flex-grow: 1;
-            }
-          </style>
+          <link rel="stylesheet" href="style.css">
         </head>
         <body>
+          <button id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
           <div id="message-container"></div>
           <form id="send-container">
             <input type="text" id="message-input">
@@ -185,14 +151,14 @@ class UI{
          let data = this.session.atlas.data.eeg // parse EEG using timestamps in JS
          console.log(data)
 
-         console.log(this.session)
+         let fs = this.session.deviceStreams[0].info.sps
 
          let time_delay = Math.round((this.props.timestamps.start -  this.props.timestamps.startEEG)/1000)
          console.log(time_delay)
         
          let finalData = []
          for (const x in data.slice(0, 4)) {
-           finalData.push(data[x]["raw"].slice(time_delay*256, data[x]["raw"].length+1))
+           finalData.push(data[x]["raw"].slice(time_delay*Math.round(fs), data[x]["raw"].length+1))
          }
 
          console.log(finalData.length)
@@ -202,13 +168,13 @@ class UI{
         // })
  
          let url = 'http://127.0.0.1:5000/emotions'
-        //  let body = {
-        //      data, 
-        //      timestamps: this.props.timestamps,
-        //  }
+         let body = {
+             finalData, 
+             fs
+         }
  
          // Send to server
-         fetch(url, {method: 'POST', body: JSON.stringify(finalData), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
         .then(res => {
  
              // Get Video Back
