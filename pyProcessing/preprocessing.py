@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+# import pandas as pd
 import matplotlib.pyplot as plt
 import scipy 
 import brainflow
@@ -8,9 +8,7 @@ import pickle
 with open("mockdata\museeeg.pkl", "rb") as infile:
     eeg = pickle.load(infile)
 
-# order of array [af7, af8, tp9, tp10]
-fs = int(eeg["fs"])
-input_arr = np.array([x for x in eeg["finalData"]])
+with open('/Users/mikaelhaji/Desktop/Github/EmotionMessagingApp/mockdata/museeeg.pkl', 'rb') as f: # Use dict.
+    data = pickle.load(f)
 
-print(input_arr.shape)
-print("hello world")
+print(data)
