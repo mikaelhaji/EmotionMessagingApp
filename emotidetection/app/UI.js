@@ -189,25 +189,33 @@ class UI{
 
 
          // Grab Data from B@P
-         let data = this.session.atlas.data.eeg
+         let data = this.session.atlas.data.eeg // parse EEG using timestamps in JS
          console.log(data)
 
-         let time_delay = Math.round((this.props.timestamps.start - this.props.timestamps.startEEG)/1000)
-         console.log(time_delay)
+         console.log(this.session)
 
+         let time_delay = Math.round((this.props.timestamps.start -  this.props.timestamps.startEEG)/1000)
+         console.log(time_delay)
+        
          let finalData = []
-         for (const x in data.slice(0,4)) {
+         for (const x in data.slice(0, 4)) {
            finalData.push(data[x]["raw"].slice(time_delay*256, data[x]["raw"].length+1))
          }
+
+         console.log(finalData.length)
+
+        // data.forEach((item, index, array) => {
+        //   console.log(array)
+        // })
  
          let url = 'http://127.0.0.1:5000/emotions'
-         let body = {
-             data, 
-             timestamps: this.props.timestamps,
-         }
+        //  let body = {
+        //      data, 
+        //      timestamps: this.props.timestamps,
+        //  }
  
          // Send to server
-         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+         fetch(url, {method: 'POST', body: JSON.stringify(finalData), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
         .then(res => {
  
              // Get Video Back

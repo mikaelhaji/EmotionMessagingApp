@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, send_file, abort, send_from_directory
 from flask_cors import CORS
 import json
 import tempfile
+import pickle
 
 # create the Flask app
 app = Flask(__name__) # static_url_path=('/Users/anush/AppData/Local/Temp')
@@ -13,13 +14,21 @@ def form_example():
     if request.method == 'POST':
 
         request_data = request.get_json()
-        eeg = request_data["data"]
-        timestamps = request_data["timestamps"]
+        # eeg = request_data["data"]
+        # timestamps = request_data["timestamps"]
 
-        print("elapsed time: {}".format(int(int(timestamps["stop"])-int(timestamps["start"]))/1000))
+        # print("elapsed time: {}".format(int(int(timestamps["stop"])-int(timestamps["start"]))/1000))
+
+        print(len(request_data))
 
         # Note: when the request objects are saved, page refreshes
         # Note: file.read() returns bin, file.stream returns a spooledtempfile
+
+        # with open(f"museeeg.pkl", "wb") as outfile:
+        #     pickle.dump(eeg, outfile)
+        
+        # with open(f"musetimestamps.pkl", "wb") as outfile:
+        #     pickle.dump(timestamps, outfile)
                 
         features = [1,0,1,0]
 
