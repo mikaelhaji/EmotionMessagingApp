@@ -8,4 +8,8 @@ import pickle
 with open("mockdata\museeeg.pkl", "rb") as infile:
     eeg = pickle.load(infile)
 
-print(len(eeg["finalData"]))
+# order of array [af7, af8, tp9, tp10]
+fs = int(eeg["fs"])
+input_arr = np.array([x for x in eeg["finalData"]])
+
+print(input_arr.shape)
