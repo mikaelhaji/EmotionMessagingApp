@@ -24,8 +24,8 @@ def form_example():
         # Note: when the request objects are saved, page refreshes
         # Note: file.read() returns bin, file.stream returns a spooledtempfile
 
-        with open(f"museeeg.pkl", "wb") as outfile:
-            pickle.dump(request_data, outfile)
+        # with open(f"museeeg.pkl", "wb") as outfile:
+        #     pickle.dump(request_data, outfile)
         
         # with open(f"musetimestamps.pkl", "wb") as outfile:
         #     pickle.dump(timestamps, outfile)
