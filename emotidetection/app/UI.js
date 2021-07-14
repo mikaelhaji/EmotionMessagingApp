@@ -100,8 +100,6 @@ class UI{
 
 
         let setupHTML = () => {
-            // const io = require("socket.io-client");
-            // import { io } from "http://localhost:3000/socket.io/socket.io.js";
 
             setTimeout(() => {
 
@@ -132,8 +130,14 @@ class UI{
               messageInput.addEventListener('input', (e) => {
                 if (e.target.value !== '') {
                   if (e.target.value.length == 1) { // potential error
-                    console.log('start message');
-                    this.props.timestamps.start = Date.now()
+                    if (Date.now() - this.props.timestamps.startEEG > 10*1000) {
+                      console.log('start message');
+                      this.props.timestamps.start = Date.now() - 10*1000
+                    }
+                    else {
+                      console.log('start message');
+                      this.props.timestamps.start = Date.now()
+                    }
                   }
                 }
                 else {
@@ -154,36 +158,6 @@ class UI{
             
             }, 1000)
 
-            // const socket = io('http://localhost:3000')
-            // const messageContainer = document.getElementById('message-container')
-            // const messageForm = document.getElementById('send-container')
-            // const messageInput = document.getElementById('message-input')
-
-            // const name = prompt('What is your name?')
-            // appendMessage('You joined')
-            // socket.emit('new-user', name)
-
-            // socket.on('chat-message', data => {
-            // appendMessage(`${data.name}: ${data.message}`)
-            // })
-
-            // socket.on('user-connected', name => {
-            // console.log(name)
-            // appendMessage(`${name} connected`)
-            // })
-
-            // socket.on('user-disconnected', name => {
-            // appendMessage(`${name} disconnected`)
-            // })
-
-            // messageForm.addEventListener('submit', e => {
-            // e.preventDefault()
-            // const message = messageInput.value
-            // appendMessage(`You: ${message}`)
-            // socket.emit('send-chat-message', message)
-            // messageInput.value = ''
-            // })
-
         }
 
 
@@ -195,13 +169,6 @@ class UI{
     }
 
     deinit = () => {}
-
-    _handleVideoLoad = (file) => {
-        this.props.timestamps.start = Date.now()
-        this.props.video = file
-        console.log(video)
-
-    }
 
     _appendMessage = (message) => {
       const messageElement = document.createElement('div')
