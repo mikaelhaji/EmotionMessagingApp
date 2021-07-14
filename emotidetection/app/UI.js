@@ -14,7 +14,7 @@ class UI{
         this.props = {
             id: String(Math.floor(Math.random()*1000000)),
             timestamps: {
-                startEEG: null,
+                startEEG: Date.now(),
                 start: null,
                 stop: null
             },
@@ -107,8 +107,6 @@ class UI{
 
 
         let setupHTML = () => {
-            // const io = require("socket.io-client");
-            // import { io } from "http://localhost:3000/socket.io/socket.io.js";
 
             setTimeout(() => {
 
@@ -139,8 +137,14 @@ class UI{
               messageInput.addEventListener('input', (e) => {
                 if (e.target.value !== '') {
                   if (e.target.value.length == 1) { // potential error
-                    console.log('start message');
-                    this.props.timestamps.start = Date.now()
+                    if (Date.now() - this.props.timestamps.startEEG > 10*1000) {
+                      console.log('start message');
+                      this.props.timestamps.start = Date.now() - 10*1000
+                    }
+                    else {
+                      console.log('start message');
+                      this.props.timestamps.start = Date.now()
+                    }
                   }
                 }
                 else {
@@ -161,41 +165,6 @@ class UI{
             
             }, 1000)
 
-            // const socket = io('http://localhost:3000')
-            // const messageContainer = document.getElementById('message-container')
-            // const messageForm = document.getElementById('send-container')
-            // const messageInput = document.getElementById('message-input')
-
-            // const name = prompt('What is your name?')
-            // appendMessage('You joined')
-            // socket.emit('new-user', name)
-
-            // socket.on('chat-message', data => {
-            // appendMessage(`${data.name}: ${data.message}`)
-            // })
-
-            // socket.on('user-connected', name => {
-            // console.log(name)
-            // appendMessage(`${name} connected`)
-            // })
-
-            // socket.on('user-disconnected', name => {
-            // appendMessage(`${name} disconnected`)
-            // })
-
-            // messageForm.addEventListener('submit', e => {
-            // e.preventDefault()
-            // const message = messageInput.value
-            // appendMessage(`You: ${message}`)
-            // socket.emit('send-chat-message', message)
-            // messageInput.value = ''
-            // })
-
-            function appendMessage(message) {
-            const messageElement = document.createElement('div')
-            messageElement.innerText = message
-            messageContainer.append(messageElement)
-            }
         }
 
 
@@ -207,13 +176,6 @@ class UI{
     }
 
     deinit = () => {}
-
-    _handleVideoLoad = (file) => {
-        this.props.timestamps.start = Date.now()
-        this.props.video = file
-        console.log(video)
-
-    }
 
     _appendMessage = (message) => {
       const messageElement = document.createElement('div')
@@ -237,7 +199,7 @@ class UI{
          }
  
          // Send to server
-         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/"} })
+         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
         .then(res => {
  
              // Get Video Back
@@ -249,8 +211,8 @@ class UI{
     }
 
     _deviceConnected = () => {
-        let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="musebutton"]`)
-        museButton.style.display = 'none'
+        // let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="musebutton"]`)
+        // museButton.style.display = 'none'
         this.props.timestamps.startEEG =  Date.now()
     }
 }
