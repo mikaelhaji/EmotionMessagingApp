@@ -13,3 +13,4 @@ fs = int(eeg["fs"])
 input_arr = np.array([x for x in eeg["finalData"]])
 
 print(input_arr.shape)
+print("hello world")
