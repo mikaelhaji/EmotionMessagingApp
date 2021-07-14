@@ -14,7 +14,7 @@ class UI{
         this.props = {
             id: String(Math.floor(Math.random()*1000000)),
             timestamps: {
-                startEEG: null,
+                startEEG: Date.now(),
                 start: null,
                 stop: null
             },
