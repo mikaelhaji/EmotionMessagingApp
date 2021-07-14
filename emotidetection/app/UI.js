@@ -191,6 +191,14 @@ class UI{
          // Grab Data from B@P
          let data = this.session.atlas.data.eeg
          console.log(data)
+
+         let time_delay = Math.round((this.props.timestamps.start - this.props.timestamps.startEEG)/1000)
+         console.log(time_delay)
+
+         let finalData = []
+         for (const x in data.slice(0,4)) {
+           finalData.push(data[x]["raw"].slice(time_delay*256, data[x]["raw"].length+1))
+         }
  
          let url = 'http://127.0.0.1:5000/emotions'
          let body = {
