@@ -225,7 +225,7 @@ class UI{
          }
  
          // Send to server
-         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/"} })
+         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
         .then(res => {
  
              // Get Video Back
@@ -237,8 +237,8 @@ class UI{
     }
 
     _deviceConnected = () => {
-        let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="musebutton"]`)
-        museButton.style.display = 'none'
+        // let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="musebutton"]`)
+        // museButton.style.display = 'none'
         this.props.timestamps.startEEG =  Date.now()
     }
 }

@@ -13,17 +13,17 @@ def form_example():
     if request.method == 'POST':
 
         request_data = request.get_json()
+        eeg = request_data["data"]
+        timestamps = request_data["timestamps"]
 
-        # print("elapsed time: {}".format(int(int(request_stamps["stop"])-int(request_stamps["startVideo"]))/1000))
-
-        print(len(request_data))
+        print("elapsed time: {}".format(int(int(timestamps["stop"])-int(timestamps["start"]))/1000))
 
         # Note: when the request objects are saved, page refreshes
         # Note: file.read() returns bin, file.stream returns a spooledtempfile
                 
         features = [1,0,1,0]
 
-        return json.dumps(features.tolist())
+        return json.dumps(features)
 
     return 'Classifying emotions'
 
