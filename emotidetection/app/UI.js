@@ -1,3 +1,4 @@
+// import { io } from "http://localhost:3000/socket.io/socket.io.js";
 class UI{
 
     static id = String(Math.floor(Math.random()*1000000))
@@ -19,7 +20,11 @@ class UI{
             video: null
         }
 
+<<<<<<< HEAD
         this.io = io('http://localhost:3000'),
+=======
+        this.io = null,
+>>>>>>> 0d84b9482cea1e8a576820ea368b0dd4a55bce96
 
         // Port Definition
         this.ports = {
@@ -28,6 +33,17 @@ class UI{
     }
 
     init = () => {
+
+        this.props.script = document.createElement("script");
+        this.props.script.src = "https://cdn.socket.io/4.1.2/socket.io.min.js" 
+        this.props.script.async = true;
+
+        console.log('loading io')
+        this.props.script.onload = () => {
+            this.io = io('http://localhost:3000')
+        }
+        document.body.appendChild(this.props.script);
+
         // Simply define the HTML template
         let HTMLtemplate = () => {return `
         <!DOCTYPE html>
@@ -37,11 +53,15 @@ class UI{
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <title>Chat App</title>
+<<<<<<< HEAD
           <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
           <script defer scr="
 
 
           // Create a new script and do exactly ehat we were doing before in which you would have yout socket (wherever it is) you call functions call them inside there
+=======
+          // <script src="https://cdn.socket.io/4.1.2/socket.io.min.js" integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+Rg" crossorigin="anonymous"></script>
+>>>>>>> 0d84b9482cea1e8a576820ea368b0dd4a55bce96
           <style>
             body {
               padding: 0;
@@ -91,6 +111,7 @@ class UI{
 
 
         let setupHTML = () => {
+<<<<<<< HEAD
             const socket = this.io
             const messageContainer = document.getElementById('message-container')
             const messageForm = document.getElementById('send-container')
@@ -98,6 +119,54 @@ class UI{
 
             const name = prompt('What is your name?')
             appendMessage('You joined')
+=======
+            // const io = require("socket.io-client");
+            // import { io } from "http://localhost:3000/socket.io/socket.io.js";
+
+            setTimeout(() => {
+
+              const socket = this.io
+
+              // console.log(socket)
+              this.messageContainer = document.getElementById('message-container')
+              const messageForm = document.getElementById('send-container')
+              const messageInput = document.getElementById('message-input')
+              
+              const name = prompt('What is your name?')
+              this._appendMessage('You joined')
+              socket.emit('new-user', name)
+
+              socket.on('chat-message', data => {
+              this._appendMessage(`${data.name}: ${data.message}`)
+              })
+
+              socket.on('user-connected', name => {
+              console.log(name)
+              this._appendMessage(`${name} connected`)
+              })
+
+              socket.on('user-disconnected', name => {
+              this._appendMessage(`${name} disconnected`)
+              })
+
+              messageForm.addEventListener('submit', e => {
+              e.preventDefault()
+              const message = messageInput.value
+              this._appendMessage(`You: ${message}`)
+              socket.emit('send-chat-message', message)
+              messageInput.value = ''
+              })
+            
+            }, 1000)
+
+            // const socket = io('http://localhost:3000')
+            // const messageContainer = document.getElementById('message-container')
+            // const messageForm = document.getElementById('send-container')
+            // const messageInput = document.getElementById('message-input')
+
+            // const name = prompt('What is your name?')
+            // appendMessage('You joined')
+>>>>>>> 0d84b9482cea1e8a576820ea368b0dd4a55bce96
             // socket.emit('new-user', name)
 
             // socket.on('chat-message', data => {
