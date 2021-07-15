@@ -60,7 +60,12 @@ class UI{
             <input type="text" id="message-input">
             <button type="submit" id="send-button">Send</button>
           </form>
-        </body>
+          
+          <button style='position: relative; top: -18px;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+        
+        
+          </body>
+
         </html>`
         }
 
