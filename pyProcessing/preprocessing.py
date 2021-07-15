@@ -6,16 +6,20 @@ import scipy
 import pickle
 
 
-with open('mockdata/openbci.pkl', 'rb') as f: # mockdata/museeeg.pkl
+
+
+with open('mockdata/openbci_updated5.pkl', 'rb') as f: # mockdata/museeeg.pkl
 
     data = pickle.load(f)
+
+
 
 fs = int(data["fs"])
 input_arr = np.array([x for x in data["finalData"]])
 k = 5 # Frame Length of Epoch
 shift = 2 # The Time that Separates the beginning and the start of two successive frames of the eeg trial
 
-print(input_arr.shape[1]/fs)
+print(input_arr.shape[1]/fs) # How many seconds?
 print(int(((input_arr.shape[1]/fs-k)/shift)+1))
 
 instF = [] 

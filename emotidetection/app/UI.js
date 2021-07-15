@@ -162,9 +162,21 @@ class UI{
          console.log(time_delay)
         
          let finalData = []
-         for (const x in data.slice(0, 4)) {
-           finalData.push(data[x]["raw"].slice(time_delay*Math.round(fs), data[x]["raw"].length+1))
-         }
+         
+
+
+         // Pick Headset and Splice Number of Channels
+         if (this.session.deviceStreams[0].info.deviceName == "muse") {
+           for (const x in data.slice(0, 4)) { 
+              finalData.push(data[x]["raw"].slice(time_delay*Math.round(fs), data[x]["raw"].length+1)) 
+            
+            }
+
+          } else {
+            for (const x in data.slice(0, 8)) {
+              finalData.push(data[x]["raw"].slice(time_delay*Math.round(fs), data[x]["raw"].length+1))
+            }
+          }
 
          console.log(finalData.length)
 
