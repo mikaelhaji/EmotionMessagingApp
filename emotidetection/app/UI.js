@@ -54,14 +54,13 @@ class UI{
           <link rel="stylesheet" href="style.css">
         </head>
         <body>
-          <button id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+   
           <div id="message-container"></div>
           <form id="send-container">
             <input type="text" id="message-input">
             <button type="submit" id="send-button">Send</button>
+            <button style='position: relative;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
           </form>
-          
-          <button style='position: relative; top: 18x;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
         
         
           </body>
