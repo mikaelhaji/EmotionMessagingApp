@@ -21,6 +21,9 @@ class UI{
             video: null
         }
 
+        this.fakecolors = ['red', 'blue'],
+        this.messageCount = 0,
+
         this.io = null,
 
         // Port Definition
@@ -141,8 +144,14 @@ class UI{
     deinit = () => {}
 
     _appendMessage = (message) => {
+      ++this.messageCount;
       const messageElement = document.createElement('div')
       messageElement.innerText = message
+      if (this.messageCount % 2 == 0) {
+        messageElement.style.color = this.fakecolors[0]
+      }else{
+        messageElement.style.color = this.fakecolors[1]
+      }
       this.messageContainer.append(messageElement)
       }
 
