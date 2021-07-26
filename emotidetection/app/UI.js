@@ -61,7 +61,7 @@ class UI{
             <button type="submit" id="send-button">Send</button>
           </form>
           
-          <button style='position: relative; top: -18px;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+          <button style='position: relative; top: 18x;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
         
         
           </body>
