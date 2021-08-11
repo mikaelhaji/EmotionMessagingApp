@@ -65,7 +65,7 @@ def collect_batches(epoched, fs):
 if __name__ == '__main__':
     from fastai.tabular.all import *
     
-    with open('mockdata/museeeg.pkl', 'rb') as f: # mockdata/museeeg.pkl
+    with open('mockdata\museeeg.pkl', 'rb') as f: # mockdata/museeeg.pkl
         data = pickle.load(f)
 
     fs = int(data["fs"])
@@ -80,18 +80,22 @@ if __name__ == '__main__':
     relevant_trim = collect_batches(epoched, fs)
 
     outputArr = pd.DataFrame(np.array([[list(flatten(coeff)) for coeff in batch] for batch in tqdm(relevant_trim)]).reshape(len(relevant_trim), elec_count*-1))
-    outputArr["label"] = 0
+    
+    # outputArr["label"] = 0
  
-    procs = [Categorify, Normalize] # partial(FillMissing, add_col=False)
-    # dls = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns)).dataloaders()
-    dl = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns))
-    dls_mock = TabularDataLoaders.from_df(df = outputArr, procs=procs, cont_names=list(outputArr.columns), y_names="label", y_block=CategoryBlock)
+    # procs = [Categorify, Normalize] # partial(FillMissing, add_col=False)
+    # # dls = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns)).dataloaders()
+    # dl = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns))
+    # dls_mock = TabularDataLoaders.from_df(df = outputArr, procs=procs, cont_names=list(outputArr.columns), y_names="label", y_block=CategoryBlock)
+    # emb_szs = get_emb_sz(dls_mock)
 
-    learner = tabular_learner(dls_mock)
-    learner.load('pyProcessing\models\goatedbabes.pth')
-    dl_test = learner.dls.test_dl(dl)
+    # mock_model = TabularModel(emb_szs, n_cont=len(dls_mock.cont_names), out_sz=4, bn_final=True, ps=[0.2, 0.5], lin_first=True, layers=[200,100])
+    # learner = TabularLearner(dls_mock, mock_model)
+    # learner.load(r'C:\Users\anush\OneDrive\Documents\GitHub\EmotionMessagingApp\pyProcessing\models\goatedbabes')
+    # dl_test = learner.dls.test_dl(dl)
+    # print(learner.get_preds(dl=dl_test))
 
-    # learner = load_learner("pkl")
+    learner = load_learner("pyProcessing\exportgoatedbabes.pkl")
 
 # do learner.export then use the saved dataloader -> learner.dls.test_dl()
 
