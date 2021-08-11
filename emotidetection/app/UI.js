@@ -21,7 +21,7 @@ class UI{
             video: null
         }
 
-        this.fakecolors = ['red', 'blue'],
+        this.fakecolors = ['red', 'blue', 'green', 'yellow'],
         this.messageCount = 0,
 
         this.io = null,
@@ -145,12 +145,16 @@ class UI{
 
     _appendMessage = (message) => {
       ++this.messageCount;
-      const messageElement = document.createElement('div')
+      const messageElement = document.createElement('div') // DEMOOOOOOOOOOOOOOOOOOOOOOOO
       messageElement.innerText = message
-      if (this.messageCount % 2 == 0) {
+      if (this.messageCount % 4 == 0) {
         messageElement.style.color = this.fakecolors[0]
-      }else{
+      }else if (this.messageCount % 4 == 1){
         messageElement.style.color = this.fakecolors[1]
+      }else if (this.messageCount % 4 == 2){
+        messageElement.style.color = this.fakecolors[2]       
+      }else if (this.messageCount % 4 == 3){
+        messageElement.style.color = this.fakecolors[3]
       }
       this.messageContainer.append(messageElement)
       }
