@@ -4,6 +4,10 @@ body {
     background: black; */
     width: 100vw; 
     height: 100vh;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
 }
         
 #application {
@@ -14,16 +18,11 @@ body {
     justify-content: center; 
 }
 
-body {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-  }
-
 #message-container {
 width: 80%;
 max-width: 1200px;
+margin-left: auto;
+margin-right: auto;
 }
 
 #message-container div {
@@ -39,8 +38,9 @@ background-color: #FFF;
 position: fixed;
 padding-bottom: 30px;
 bottom: 0;
+left: 200px;
 background-color: white;
-max-width: 1200px;
+/* max-width: 1200px; */
 width: 80%;
 display: flex;
 }

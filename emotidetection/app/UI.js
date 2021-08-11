@@ -21,6 +21,9 @@ class UI{
             video: null
         }
 
+        this.fakecolors = ['red', 'blue'],
+        this.messageCount = 0,
+
         this.io = null,
 
         // Port Definition
@@ -54,14 +57,13 @@ class UI{
           <link rel="stylesheet" href="style.css">
         </head>
         <body>
-          <button id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+   
           <div id="message-container"></div>
           <form id="send-container">
             <input type="text" id="message-input">
             <button type="submit" id="send-button">Send</button>
+            <button style='position: relative;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
           </form>
-          
-          <button style='position: relative; top: 18x;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
         
         
           </body>
@@ -142,8 +144,14 @@ class UI{
     deinit = () => {}
 
     _appendMessage = (message) => {
+      ++this.messageCount;
       const messageElement = document.createElement('div')
       messageElement.innerText = message
+      if (this.messageCount % 2 == 0) {
+        messageElement.style.color = this.fakecolors[0]
+      }else{
+        messageElement.style.color = this.fakecolors[1]
+      }
       this.messageContainer.append(messageElement)
       }
 
