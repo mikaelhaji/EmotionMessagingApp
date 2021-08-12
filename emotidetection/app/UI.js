@@ -62,7 +62,7 @@ class UI{
           <form id="send-container">
             <input type="text" id="message-input">
             <button type="submit" id="send-button">Send</button>
-            <button style='position: relative;' id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+            <button style='position: relative;' type="button", id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
           </form>
         
         
@@ -103,9 +103,9 @@ class UI{
               messageInput.addEventListener('input', (e) => {
                 if (e.target.value !== '') {
                   if (e.target.value.length == 1) { // potential error
-                    if (Date.now() - this.props.timestamps.startEEG > 10*1000) {
+                    if (Date.now() - this.props.timestamps.startEEG > 5*1000) {
                       console.log('start message');
-                      this.props.timestamps.start = Date.now() - 10*1000
+                      this.props.timestamps.start = Date.now() - 5*1000
                     }
                     else {
                       console.log('start message');
@@ -170,7 +170,7 @@ class UI{
 
          let fs = this.session.deviceStreams[0].info.sps
 
-         let time_delay = Math.round((this.props.timestamps.start -  this.props.timestamps.startEEG)/1000)
+         let time_delay = Math.abs(Math.round((this.props.timestamps.start -  this.props.timestamps.startEEG)/1000))
          console.log(time_delay)
         
          let finalData = []
@@ -190,7 +190,7 @@ class UI{
             }
           }
 
-         console.log(finalData.length)
+         console.log(finalData[0].length)
 
         // data.forEach((item, index, array) => {
         //   console.log(array)
@@ -204,10 +204,11 @@ class UI{
  
          // Send to server
          fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
-        .then(res => {
+        .then(response => response.json())
+        .then(data => {
  
              // Get Video Back
-             console.log(res)
+             console.log(data)
              
              // Display Video
              
