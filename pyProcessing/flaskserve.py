@@ -30,7 +30,7 @@ def form_example():
         temp = pathlib.PosixPath
         pathlib.PosixPath = pathlib.WindowsPath
     
-        with open('mockdata\museeeg.pkl', 'rb') as f: # mockdata/museeeg.pkl
+        with open('mockdata\openbci_updated5.pkl', 'rb') as f: # mockdata/museeeg.pkl
             data = pickle.load(f)
 
         fs = int(data["fs"])
@@ -47,7 +47,7 @@ def form_example():
         outputArr = pd.DataFrame(np.array([[list(flatten(coeff)) for coeff in batch] for batch in tqdm(relevant_trim)]).reshape(len(relevant_trim), elec_count*-1))
         print(outputArr.shape)
 
-        preds = gen_predict(outputArr)
+        preds = gen_predict(outputArr, elec_count)
 
         pathlib.PosixPath = temp
 
