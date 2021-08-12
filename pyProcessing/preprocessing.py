@@ -64,6 +64,9 @@ def collect_batches(epoched, fs):
 
 if __name__ == '__main__':
     from fastai.tabular.all import *
+    import pathlib
+    temp = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
     
     with open('mockdata\museeeg.pkl', 'rb') as f: # mockdata/museeeg.pkl
         data = pickle.load(f)
@@ -80,26 +83,15 @@ if __name__ == '__main__':
     relevant_trim = collect_batches(epoched, fs)
 
     outputArr = pd.DataFrame(np.array([[list(flatten(coeff)) for coeff in batch] for batch in tqdm(relevant_trim)]).reshape(len(relevant_trim), elec_count*-1))
-    
-    # outputArr["label"] = 0
- 
-    # procs = [Categorify, Normalize] # partial(FillMissing, add_col=False)
-    # # dls = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns)).dataloaders()
-    # dl = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns))
-    # dls_mock = TabularDataLoaders.from_df(df = outputArr, procs=procs, cont_names=list(outputArr.columns), y_names="label", y_block=CategoryBlock)
-    # emb_szs = get_emb_sz(dls_mock)
+    print(outputArr.shape)
+  
+    learner = load_learner("pyProcessing\musegoatedbabes.pkl")
 
-    # mock_model = TabularModel(emb_szs, n_cont=len(dls_mock.cont_names), out_sz=4, bn_final=True, ps=[0.2, 0.5], lin_first=True, layers=[200,100])
-    # learner = TabularLearner(dls_mock, mock_model)
-    # learner.load(r'C:\Users\anush\OneDrive\Documents\GitHub\EmotionMessagingApp\pyProcessing\models\goatedbabes')
-    # dl_test = learner.dls.test_dl(dl)
-    # print(learner.get_preds(dl=dl_test))
+    dl = learner.dls.test_dl(outputArr)
+    preds,  _ = learner.get_preds(dl=dl)
+    print(preds)
 
-    learner = load_learner("pyProcessing\exportgoatedbabes.pkl")
-
-# do learner.export then use the saved dataloader -> learner.dls.test_dl()
-
-
+    pathlib.PosixPath = temp
 
 
 
