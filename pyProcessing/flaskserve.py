@@ -4,10 +4,8 @@ from flask_cors import CORS
 import json
 import tempfile
 import pickle
-import pathlib
 from preprocessing import *
 from tqdm import tqdm 
-from statistics import mode
         
 # create the Flask app
 app = Flask(__name__) # static_url_path=('/Users/anush/AppData/Local/Temp')
@@ -24,19 +22,15 @@ def form_example():
         # print("elapsed time: {}".format(int(int(timestamps["stop"])-int(timestamps["start"]))/1000))
 
         print(len(request_data))
-
-     
-
-        temp = pathlib.PosixPath
-        pathlib.PosixPath = pathlib.WindowsPath
     
-        with open('mockdata\openbci_updated5.pkl', 'rb') as f: # mockdata/museeeg.pkl
-            data = pickle.load(f)
+        # with open('mockdata\openbci_updated5.pkl', 'rb') as f: # mockdata/museeeg.pkl
+        #     data = pickle.load(f)
 
-        fs = int(data["fs"])
+        fs = int(request_data["fs"])
         batch = 5*fs
 
-        load_data = np.array(data["finalData"]).T
+        load_data = np.array(request_data["finalData"]).T
+        print(load_data.shape)
         elec_count = load_data.shape[1]
 
         epoched = np.array(np.array_split(load_data[:int(len(load_data)/batch)*batch], int((len(load_data)/batch))))
@@ -49,8 +43,6 @@ def form_example():
 
         preds = gen_predict(outputArr, elec_count)
 
-        pathlib.PosixPath = temp
-
         # Note: when the request objects are saved, page refreshes
         # Note: file.read() returns bin, file.stream returns a spooledtempfile
 
@@ -62,7 +54,7 @@ def form_example():
                 
         # features = [1,0,1,0]
 
-        return json.dumps(mode(preds.tolist())) # list(preds)
+        return json.dumps(preds) # list(preds)
 
     return 'Classifying emotions'
 

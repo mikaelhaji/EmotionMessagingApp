@@ -28,11 +28,14 @@ export const settings = {
                 , "Cyton"
                 ],
         onconnect: () => {
+
                 settings.graph.nodes.find(n => {
-                if (n.id === 'ui'){
-                        n.instance._deviceConnected()
-                }       
-        })}
+                        if (n.id === 'ui'){
+                                n.instance._deviceConnected()
+                        }       
+                })
+
+            }
         }
 }; 
         

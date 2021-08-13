@@ -18,10 +18,9 @@ class UI{
                 start: null,
                 stop: null
             },
-            video: null
         }
 
-        this.fakecolors = ['red', 'blue', 'green', 'yellow'],
+        this.colors = ['red', 'blue', 'green', 'yellow'],
         this.messageCount = 0,
 
         this.io = null,
@@ -53,20 +52,23 @@ class UI{
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <title>Chat App</title>
-          // <script src="https://cdn.socket.io/4.1.2/socket.io.min.js" integrity="sha384-toS6mmwu70G0fw54EGlWWeA4z3dyJ+dlXBtSURSKN4vyRFOcxd3Bzjj/AoOwY+Rg" crossorigin="anonymous"></script>
           <link rel="stylesheet" href="style.css">
         </head>
         <body>
    
-          <div id="message-container"></div>
+          <div id="main-div">
+            <div id="message-container"></div>
+            <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          </div>
+          
           <form id="send-container">
             <input type="text" id="message-input">
             <button type="submit" id="send-button">Send</button>
             <button style='position: relative;' type="button", id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
           </form>
+       
         
-        
-          </body>
+        </body>
 
         </html>`
         }
@@ -82,17 +84,19 @@ class UI{
               this.messageContainer = document.getElementById('message-container')
               const messageForm = document.getElementById('send-container')
               const messageInput = document.getElementById('message-input')
+              this.loader = document.getElementsByClassName('lds-roller')[0]
+              console.log(this.loader)
               
               const name = prompt('What is your name?')
               this._appendMessage('You joined')
               socket.emit('new-user', name)
 
               socket.on('chat-message', data => {
-              this._appendMessage(`${data.name}: ${data.message}`)
+              this._appendMessage(`${data.name}: ${data.message}`, data.color)
               })
 
               socket.on('user-connected', name => {
-              console.log(name)
+              // console.log(name)
               this._appendMessage(`${name} connected`)
               })
 
@@ -123,10 +127,18 @@ class UI{
               messageForm.addEventListener('submit', e => {
               e.preventDefault()
               const message = messageInput.value
-              this._appendMessage(`You: ${message}`)
-              socket.emit('send-chat-message', message)
-              this._onMessageSend()
-              messageInput.value = ''
+              this._onMessageSend(message).then((m_color) => {
+                  console.log(m_color)
+                  socket.emit('send-chat-message', {message: message, color: m_color})
+                  messageInput.value = ''
+              }).catch((error) => {
+                  this._hideLoader()
+                  this._appendMessage(`You: ${message}`)
+                  alert("Error detecting your emotion: "+error)
+                  return
+        
+                 })
+         
               })
             
             }, 1000)
@@ -143,54 +155,78 @@ class UI{
 
     deinit = () => {}
 
-    _appendMessage = (message) => {
+    _showLoader = () => {
+      this.loader.style.visibility = "visible";
+
+    }
+
+    _hideLoader = () => {
+      this.loader.style.visibility = "hidden";
+
+    }
+
+    _appendMessage = (message, color="black") => {
       ++this.messageCount;
       const messageElement = document.createElement('div')
       messageElement.innerText = message
-      if (this.messageCount % 4 == 0) {
-        messageElement.style.color = this.fakecolors[0]
-      }else if (this.messageCount % 4 == 1){
-        messageElement.style.color = this.fakecolors[1]
-      }else if (this.messageCount % 4 == 2){
-        messageElement.style.color = this.fakecolors[2]
-      }else if (this.messageCount % 4 == 3){
-        messageElement.style.color = this.fakecolors[3]
-      }
+      messageElement.style.color = color
+      // if (this.messageCount % 4 == 0) {
+      //   messageElement.style.color = this.fakecolors[0]
+      // }else if (this.messageCount % 4 == 1){
+      //   messageElement.style.color = this.fakecolors[1]
+      // }else if (this.messageCount % 4 == 2){
+      //   messageElement.style.color = this.fakecolors[2]
+      // }else if (this.messageCount % 4 == 3){
+      //   messageElement.style.color = this.fakecolors[3]
+      // }
       this.messageContainer.append(messageElement)
     }
 
-    _onMessageSend = () => {
+    _onMessageSend = async (message) => {
          // Detect when Video Stops
          this.props.timestamps.stop = Date.now()
-
+         this._showLoader()
 
          // Grab Data from B@P
          let data = this.session.atlas.data.eeg // parse EEG using timestamps in JS
          console.log(data)
-
-         let fs = this.session.deviceStreams[0].info.sps
+        
+         try {
+            this.fs = this.session.deviceStreams[0].info.sps
+         } catch (error) {
+            this._hideLoader()
+            this._appendMessage(`You: ${message}`)
+            alert("Please Connect A Device")
+            return
+         }
 
          let time_delay = Math.abs(Math.round((this.props.timestamps.start -  this.props.timestamps.startEEG)/1000))
-         console.log(time_delay)
         
          let finalData = []
-         
+         let fs = this.fs
 
 
          // Pick Headset and Splice Number of Channels
          if (this.session.deviceStreams[0].info.deviceName == "muse") {
            for (const x in data.slice(0, 4)) { 
-              finalData.push(data[x]["raw"].slice(time_delay*Math.round(fs), data[x]["raw"].length+1)) 
+              finalData.push(data[x]["raw"].slice(time_delay*Math.round(this.fs), data[x]["raw"].length+1)) 
             
             }
 
           } else {
             for (const x in data.slice(0, 8)) {
-              finalData.push(data[x]["raw"].slice(time_delay*Math.round(fs), data[x]["raw"].length+1))
+              finalData.push(data[x]["raw"].slice(time_delay*Math.round(this.fs), data[x]["raw"].length+1))
             }
           }
 
          console.log(finalData[0].length)
+
+         if (finalData[0].length < fs*5) {
+          this._hideLoader()
+          this._appendMessage(`You: ${message}`)
+          alert("We are still collecting data, no emotion detected")
+          return
+         }
 
         // data.forEach((item, index, array) => {
         //   console.log(array)
@@ -198,21 +234,42 @@ class UI{
  
          let url = 'http://127.0.0.1:5000/emotions'
          let body = {
-             finalData, 
+             finalData,
              fs
          }
  
          // Send to server
-         fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
-        .then(response => response.json())
-        .then(data => {
+        //  fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+        // .then(response => response.json())
+        // .then(emotion => {
  
-             // Get Video Back
-             console.log(data)
+        //      // Get Video Back
+        //      console.log(emotion)
+        //      this._hideLoader()
+        //      this._appendMessage(`You: ${message}`, this.colors[emotion])
+        //      return await this.colors[emotion]
              
-             // Display Video
+        //      // Display Video
              
-         })
+        //  }).catch((error) => {
+        //   this._hideLoader()
+        //   this._appendMessage(`You: ${message}`)
+        //   alert("Error detecting your emotion: "+error)
+        //   return
+
+        //  });
+        let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        let pred = await response.json()
+        console.log(pred)
+        this._hideLoader()
+        this._appendMessage(`You: ${message}`, this.colors[pred])
+        return this.colors[pred]
+             
     }
 
     _deviceConnected = () => {
