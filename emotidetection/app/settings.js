@@ -10,11 +10,29 @@ export const settings = {
         display: {
                 "production":false
         },
+        intro:{
+                title: false,
+                mode: 'solo'
+        },
         graph: {
                 "nodes":[
-                        {id: 'ui', class: UI, params: {}}
+                        {id: 'ui', class: UI, params: {}},
+                        {id:'brainstorm', class: brainsatplay.plugins.utilities.Brainstorm}
                 ],
-                "edges":[]
+                "edges": [
+                // {
+                //         source: 'ui:message',
+                //         target: 'brainstorm'
+                // },
+                // {
+                //        source: 'brainstorm:ui_message',
+                //        target: 'ui:onmessage'
+                // },
+                {
+                        source: 'ui:message',
+                        target: 'ui:onmessage'
+                }
+        ]
         },
         // editor: {
         //         "parentId":"brainsatplay-studio",
