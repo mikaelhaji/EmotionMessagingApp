@@ -23,12 +23,12 @@ class UI{
         this.colors = ['red', 'blue', 'green', 'yellow'],
         this.messageCount = 0,
 
-        this.io = null,
+        this.io = null
 
         // Port Definition
         this.ports = {
             message: {
-              default: '',
+              default: {message:'connected'},
               input: {type: undefined},
               output: {type: 'object'},
               onUpdate: (userData) => {
@@ -40,7 +40,11 @@ class UI{
               output: {type: null},
               onUpdate: (userData) => {
                 userData.forEach(u => {
-                  if (u.data.message === ''){
+                  if (u.data.message === 'connected'){
+
+                    console.log(this.session.info)
+                    if (u.id == this.session.info.auth.id) this.messageContainer.innerHTML = ''
+
                     this._appendMessage(`${u.username} connected`)
                   } else {
                     this._appendMessage(`${u.username}: ${u.data.message}`, u.data.color)
@@ -149,14 +153,15 @@ class UI{
               e.preventDefault()
               const message = messageInput.value
               this._onMessageSend(message).then((m_color) => {
-                  console.log(m_color)
+                  console.log('COLOR',m_color)
                   this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
                   // socket.emit('send-chat-message', {message: message, color: m_color})
                   messageInput.value = ''
               }).catch((error) => {
                   this._hideLoader()
-                  this._appendMessage(`You: ${message}`)
+                  this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}]) // this._appendMessage(`You: ${message}`)
                   alert("Error detecting your emotion: "+error)
+                  messageInput.value = ''
                   return
         
                  })
@@ -171,10 +176,6 @@ class UI{
         return {HTMLtemplate, setupHTML}
     }
 
-    default = (input) => {
-        return input
-    }
-
     deinit = () => {}
 
     _showLoader = () => {
@@ -187,7 +188,7 @@ class UI{
 
     }
 
-    _appendMessage = (message, color="black") => {
+    _appendMessage = (message, color="black") => { // add conditional that checks user id 
       ++this.messageCount;
       const messageElement = document.createElement('div')
       messageElement.innerText = message
@@ -204,7 +205,9 @@ class UI{
       this.messageContainer.append(messageElement)
     }
 
-    _onMessageSend = async (message) => {
+    _onMessageSend = (message) => {
+
+      return new Promise(async (resolve, reject) => {
          // Detect when Video Stops
          this.props.timestamps.stop = Date.now()
          this._showLoader()
@@ -217,9 +220,7 @@ class UI{
             this.fs = this.session.deviceStreams[0].info.sps
          } catch (error) {
             this._hideLoader()
-            this._appendMessage(`You: ${message}`)
-            alert("Please Connect A Device")
-            return
+            reject('Please Connect a Device')
          }
 
          let time_delay = Math.abs(Math.round((this.props.timestamps.start -  this.props.timestamps.startEEG)/1000))
@@ -245,9 +246,7 @@ class UI{
 
          if (finalData[0].length < fs*5) {
           this._hideLoader()
-          this._appendMessage(`You: ${message}`)
-          alert("We are still collecting data, no emotion detected")
-          return
+          reject("We are still collecting data, no emotion detected")
          }
 
         // data.forEach((item, index, array) => {
@@ -290,8 +289,8 @@ class UI{
         console.log(pred)
         this._hideLoader()
         this._appendMessage(`You: ${message}`, this.colors[pred])
-        return this.colors[pred]
-             
+        resolve(this.colors[pred])
+      })
     }
 
     _deviceConnected = () => {

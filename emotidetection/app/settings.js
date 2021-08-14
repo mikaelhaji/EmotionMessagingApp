@@ -12,26 +12,30 @@ export const settings = {
         },
         intro:{
                 title: false,
-                mode: 'solo'
+                mode: 'multi'
         },
         graph: {
                 "nodes":[
                         {id: 'ui', class: UI, params: {}},
-                        {id:'brainstorm', class: brainsatplay.plugins.utilities.Brainstorm}
+                        {id:'brainstorm', class: brainsatplay.plugins.networking.Brainstorm}
                 ],
                 "edges": [
-                // {
-                //         source: 'ui:message',
-                //         target: 'brainstorm'
-                // },
-                // {
-                //        source: 'brainstorm:ui_message',
-                //        target: 'ui:onmessage'
-                // },
                 {
                         source: 'ui:message',
-                        target: 'ui:onmessage'
-                }
+                        target: 'brainstorm'
+                },
+                {
+                       source: 'brainstorm:ui_message',
+                //        source: 'brainstorm:message',
+
+
+                       target: 'ui:onmessage'
+
+                },
+                // {
+                //         source: 'ui:message',
+                //         target: 'ui:onmessage'
+                // }
         ]
         },
         // editor: {
