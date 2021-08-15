@@ -3,18 +3,13 @@ import pandas as pd
 from tqdm import tqdm 
 
 from pywt import wavedec
-import pickle
 from brainflow.data_filter import DataFilter, FilterTypes, NoiseTypes
-from antropy import spectral_entropy, num_zerocross, hjorth_params, app_entropy, svd_entropy, sample_entropy
-from nolds import hurst_rs, lyap_r, corr_dim
+from antropy import hjorth_params, app_entropy, svd_entropy
 
 #screw python warnings
 import warnings
 warnings.filterwarnings("ignore")
 
-from sklearn.preprocessing import StandardScaler
-
-import sklearn as skl
 import concurrent.futures
 import functools
 
@@ -50,6 +45,10 @@ def featurize_parralel(batches, level=4):
 
     return list(executor.map(calc_stats, coeffs))
 
+def collect_batches(epoched, fs):
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        return [batchn for batchn in tqdm(executor.map(functools.partial(featurize, fs=fs), [batches for batches in epoched], chunksize=1))]
+
 def featurize(batches, fs, level=4):
   # for electrode in range(batches.shape[1]-1):
   #   for coeff in (wavedec(filtered(batches[:, electrode]), 'db2', 'zero', level=level)):
@@ -58,45 +57,33 @@ def featurize(batches, fs, level=4):
 
   return [[[svd_entropy(coeff), hjorth_params(coeff), np.amin(coeff), np.mean(np.square(coeff)), np.var(coeff), np.std(coeff), pd.Series(coeff).mad(), app_entropy(coeff), np.amax(coeff)] for coeff in wavedec(filtered(batches[:, electrode], fs), 'db2', 'zero', level=level)] for electrode in range(batches.shape[1])]
 
-def collect_batches(epoched, fs):
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        return [batchn for batchn in tqdm(executor.map(functools.partial(featurize, fs=fs), [batches for batches in epoched], chunksize=1))]
 
-if __name__ == '__main__':
-    from fastai.tabular.all import *
+# if __name__ == '__main__':
+#     from fastai.tabular.all import *
+#     import pathlib
+#     temp = pathlib.PosixPath
+#     pathlib.PosixPath = pathlib.WindowsPath
     
-    with open('mockdata/museeeg.pkl', 'rb') as f: # mockdata/museeeg.pkl
-        data = pickle.load(f)
+#     with open('mockdata\museeeg.pkl', 'rb') as f: # mockdata/museeeg.pkl
+#         data = pickle.load(f)
 
-    fs = int(data["fs"])
-    batch = 5*fs
+#     fs = int(data["fs"])
+#     batch = 5*fs
 
-    load_data = np.array(data["finalData"]).T
-    elec_count = load_data.shape[1]
+#     load_data = np.array(data["finalData"]).T
+#     elec_count = load_data.shape[1]
 
-    epoched = np.array(np.array_split(load_data[:int(len(load_data)/batch)*batch], int((len(load_data)/batch))))
-    print(epoched.shape)
+#     epoched = np.array(np.array_split(load_data[:int(len(load_data)/batch)*batch], int((len(load_data)/batch))))
+#     print(epoched.shape)
 
-    relevant_trim = collect_batches(epoched, fs)
+#     relevant_trim = collect_batches(epoched, fs)
 
-    outputArr = pd.DataFrame(np.array([[list(flatten(coeff)) for coeff in batch] for batch in tqdm(relevant_trim)]).reshape(len(relevant_trim), elec_count*-1))
-    outputArr["label"] = 0
- 
-    procs = [Categorify, Normalize] # partial(FillMissing, add_col=False)
-    # dls = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns)).dataloaders()
-    dl = TabularPandas(df = outputArr, procs=procs, cont_names=list(outputArr.columns))
-    dls_mock = TabularDataLoaders.from_df(df = outputArr, procs=procs, cont_names=list(outputArr.columns), y_names="label", y_block=CategoryBlock)
+#     outputArr = pd.DataFrame(np.array([[list(flatten(coeff)) for coeff in batch] for batch in tqdm(relevant_trim)]).reshape(len(relevant_trim), elec_count*-1))
+#     print(outputArr.shape)
 
-    learner = tabular_learner(dls_mock)
-    learner.load('pyProcessing\models\goatedbabes.pth')
-    dl_test = learner.dls.test_dl(dl)
+#     preds = gen_predict(outputArr)
 
-    # learner = load_learner("pkl")
-
-# do learner.export then use the saved dataloader -> learner.dls.test_dl()
-
-
-
+#     pathlib.PosixPath = temp
 
 
 
