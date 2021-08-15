@@ -1,4 +1,5 @@
 import {UI} from './UI.js'
+// import {Parser} from './Parser'
 
 export const settings = {
         name: "Emotion Detection Messaging App",
@@ -17,7 +18,19 @@ export const settings = {
         graph: {
                 "nodes":[
                         {id: 'ui', class: UI, params: {}},
-                        {id:'brainstorm', class: brainsatplay.plugins.networking.Brainstorm}
+                        {id:'brainstorm', class: brainsatplay.plugins.networking.Brainstorm, params: {
+                                
+                                onUserConnected: (u) => {
+                                        let UI = settings.graph.nodes.find(n => n.id === 'ui')
+                                        UI.instance._userAdded(u)
+                                        },
+                                        
+                                onUserDisconnected: (u) => {
+                                let UI = settings.graph.nodes.find(n => n.id === 'ui')
+                                UI.instance._userRemoved(u)
+                                },
+                        }},
+                        // {id: 'parser', class: Parser, params: {}}
                 ],
                 "edges": [
                 {

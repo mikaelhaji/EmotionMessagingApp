@@ -58,15 +58,15 @@ class UI{
 
     init = () => {
 
-        this.props.script = document.createElement("script");
-        this.props.script.src = "https://cdn.socket.io/4.1.2/socket.io.min.js" 
-        this.props.script.async = true;
+        // this.props.script = document.createElement("script");
+        // this.props.script.src = "https://cdn.socket.io/4.1.2/socket.io.min.js" 
+        // this.props.script.async = true;
 
-        console.log('loading io')
-        this.props.script.onload = () => {
-            this.io = io('http://localhost:3000')
-        }
-        document.body.appendChild(this.props.script);
+        // console.log('loading io')
+        // this.props.script.onload = () => {
+        //     this.io = io('http://localhost:3000')
+        // }
+        // document.body.appendChild(this.props.script);
 
         // Simply define the HTML template
         let HTMLtemplate = () => {return `
@@ -103,7 +103,7 @@ class UI{
 
             setTimeout(() => {
 
-              const socket = this.io
+              // const socket = this.io
 
               // console.log(socket)
               this.messageContainer = document.getElementById('message-container')
@@ -177,6 +177,22 @@ class UI{
     }
 
     deinit = () => {}
+
+    _userAdded = (userData) => {
+      let u = userData[0]
+      console.log(u)
+      // this.props.readouts.innerHTML += `<p id="${this.props.id}-${u.id}" class="readout" >${u.username}: ${u.data ?? ''}</p>`
+      // _appendMessage because userconnected has already been broadcasted, no need to runsafe
+
+  }
+
+  _userRemoved = (userData) => {
+      let u = userData[0]
+      console.log(u)
+      // let readout = document.getElementById(`${this.props.id}-${u.id}`)
+      // readout.remove()
+      // _appendMessage
+  }
 
     _showLoader = () => {
       this.loader.style.visibility = "visible";
