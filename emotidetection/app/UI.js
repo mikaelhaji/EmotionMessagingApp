@@ -27,46 +27,46 @@ class UI{
 
         // Port Definition
         this.ports = {
-            message: {
-              default: {message:'connected'},
-              input: {type: undefined},
-              output: {type: 'object'},
-              onUpdate: (userData) => {
-                return userData
-              }
-            },
-            onmessage: {
-              input: {type: 'object'},
-              output: {type: null},
-              onUpdate: (userData) => {
-                userData.forEach(u => {
-                  if (u.data.message === 'connected'){
+            // message: {
+            //   default: {message:'connected'},
+            //   input: {type: undefined},
+            //   output: {type: 'object'},
+            //   onUpdate: (userData) => {
+            //     return userData
+            //   }
+            // },
+            // onmessage: {
+            //   input: {type: 'object'},
+            //   output: {type: null},
+            //   onUpdate: (userData) => {
+            //     userData.forEach(u => {
+            //       if (u.data.message === 'connected'){
 
-                    console.log(this.session.info)
-                    if (u.id == this.session.info.auth.id) this.messageContainer.innerHTML = ''
+            //         console.log(this.session.info)
+            //         if (u.id == this.session.info.auth.id) this.messageContainer.innerHTML = ''
 
-                    this._appendMessage(`${u.username} connected`)
-                  } else {
-                    this._appendMessage(`${u.username}: ${u.data.message}`, u.data.color)
-                  }
+            //         this._appendMessage(`${u.username} connected`)
+            //       } else {
+            //         this._appendMessage(`${u.username}: ${u.data.message}`, u.data.color)
+            //       }
           
-                })
-              }
-            }
+            //     })
+            //   }
+            // }
         }
     }
 
     init = () => {
 
-        // this.props.script = document.createElement("script");
-        // this.props.script.src = "https://cdn.socket.io/4.1.2/socket.io.min.js" 
-        // this.props.script.async = true;
+        this.props.script = document.createElement("script");
+        this.props.script.src = "https://cdn.socket.io/4.1.2/socket.io.min.js" 
+        this.props.script.async = true;
 
-        // console.log('loading io')
-        // this.props.script.onload = () => {
-        //     this.io = io('http://localhost:3000')
-        // }
-        // document.body.appendChild(this.props.script);
+        console.log('loading io')
+        this.props.script.onload = () => {
+            this.io = io('http://localhost:3000')
+        }
+        document.body.appendChild(this.props.script);
 
         // Simply define the HTML template
         let HTMLtemplate = () => {return `
@@ -103,7 +103,7 @@ class UI{
 
             setTimeout(() => {
 
-              // const socket = this.io
+              const socket = this.io
 
               // console.log(socket)
               this.messageContainer = document.getElementById('message-container')
@@ -112,22 +112,22 @@ class UI{
               this.loader = document.getElementsByClassName('lds-roller')[0]
               console.log(this.loader)
               
-              // const name = prompt('What is your name?') // not necessary 
-              // this._appendMessage('You joined')
-              // socket.emit('new-user', name)
+              const name = prompt('What is your name?') // not necessary 
+              this._appendMessage('You joined')
+              socket.emit('new-user', name)
 
-              // socket.on('chat-message', data => {
-              // this._appendMessage(`${data.name}: ${data.message}`, data.color)
-              // })
+              socket.on('chat-message', data => {
+              this._appendMessage(`${data.name}: ${data.message}`, data.color)
+              })
 
-              // socket.on('user-connected', name => {
-              // // console.log(name)
-              // this._appendMessage(`${name} connected`)
-              // })
+              socket.on('user-connected', name => {
+              // console.log(name)
+              this._appendMessage(`${name} connected`)
+              })
 
-              // socket.on('user-disconnected', name => {
-              // this._appendMessage(`${name} disconnected`)
-              // })
+              socket.on('user-disconnected', name => {
+              this._appendMessage(`${name} disconnected`)
+              })
 
               messageInput.addEventListener('input', (e) => {
                 if (e.target.value !== '') {
@@ -154,13 +154,15 @@ class UI{
               const message = messageInput.value
               this._onMessageSend(message).then((m_color) => {
                   console.log('COLOR',m_color)
-                  this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                  // socket.emit('send-chat-message', {message: message, color: m_color})
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                  socket.emit('send-chat-message', {message: message, color: m_color})
                   messageInput.value = ''
               }).catch((error) => {
                   this._hideLoader()
-                  this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}]) // this._appendMessage(`You: ${message}`)
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                  socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
                   alert("Error detecting your emotion: "+error)
+                  this._appendMessage(`You: ${message}`)
                   messageInput.value = ''
                   return
         
