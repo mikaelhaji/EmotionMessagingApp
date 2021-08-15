@@ -188,3 +188,10 @@ flex-grow: 1;
     text-align: center;
     font-family: Arial;
   }
+  .pages {
+    position: absolute; 
+    transition: opacity 1s; 
+    display: flex; 
+    flex-direction: 
+    column; gap: 20px;
+}

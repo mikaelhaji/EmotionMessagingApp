@@ -6,6 +6,7 @@ import tempfile
 import pickle
 from preprocessing import *
 from tqdm import tqdm 
+from emotivate import *
         
 # create the Flask app
 app = Flask(__name__) # static_url_path=('/Users/anush/AppData/Local/Temp')
@@ -54,6 +55,21 @@ def form_example():
                 
         # features = [1,0,1,0]
 
+        return json.dumps(preds) # list(preds)
+
+    return 'Classifying emotions'
+
+@app.route('/auth', methods=['POST', 'GET'])
+def form_example():
+    if request.method == 'POST':
+
+        request_data = request.get_json()
+
+        # Create UI for auth stuff
+
+        preds = [1,2,3,4,5]
+
+        
         return json.dumps(preds) # list(preds)
 
     return 'Classifying emotions'

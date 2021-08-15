@@ -1,3 +1,5 @@
+
+
 // import { io } from "http://localhost:3000/socket.io/socket.io.js";
 class UI{
 
@@ -89,93 +91,107 @@ class UI{
           <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
           <link rel="stylesheet" href="css/jquery/jquery-ui.css">
 
-          
+
         </head>
         <body>
-   
-          <div id="main-div">
-            <div id="message-container"></div>
-            <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-          </div>
-          
+          <div style = "z-index: 2, position: relative", class: "pages" > 
           <form id="send-container">
-            <input type="text" id="message-input">
-            <button type="submit" id="send-button">Send</button>
-            <button style='position: relative;' type="button", id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
-          </form>
+              <input type="text" id="message-input">
+              <button type="submit" id="send-button">Send</button>
+              <button style='position: relative;' type="button", id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+            </form>
+          </div>
 
-          <div id="speller_matrix">
-	
-          <table>
-            <tr>
-              <td id="A">A</td>
-              <td id="B">B</td> 
-              <td id="C">C</td>
-              <td id="D">D</td>
-              <td id="E">E</td> 
-              <td id="F">F</td>
-            </tr>
-          
-            <tr>
-              <td id="G">G</td>
-              <td id="H">H</td> 
-              <td id="I">I</td>
-              <td id="J">J</td>
-              <td id="K">K</td> 
-              <td id="L">L</td>
-            </tr>
-          
-            <tr>
-              <td id="M">M</td>
-              <td id="N">N</td> 
-              <td id="O">O</td>
-              <td id="P">P</td>
-              <td id="Q">Q</td> 
-              <td id="R">R</td>
-            </tr>
+          <div style = "z-index: 1, opacity: 0, position: relative", class: "pages" >
+
+
+            <div id="main-div">
+              <div id="message-container"></div>
+              <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            </div>
             
-            <tr>
-              <td id="S">S</td>
-              <td id="T">T</td> 
-              <td id="U">U</td>
-              <td id="V">V</td>
-              <td id="W">W</td> 
-              <td id="X">X</td>
-            </tr>
             
-            <tr>
-              <td id="Y">Y</td>
-              <td id="Z">Z</td> 
-              <td id="0">0</td>
-              <td id="1">1</td>
-              <td id="2">2</td> 
-              <td id="3">3</td>
-            </tr>
+            <form id="send-container">
+              <input type="text" id="message-input">
+              <button type="submit" id="send-button">Send</button>
+              <button style='position: relative;' type="button", id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+            </form>
+
+
             
-            <tr>
-              <td id="4">4</td>
-              <td id="5">5</td> 
-              <td id="6">6</td>
-              <td id="7">7</td>
-              <td id="8">8</td> 
-              <td id="9">9</td>
-            </tr>
-          
-          </table>
-          
+
+            <div id="speller_matrix">
+    
+            <table>
+              <tr>
+                <td id="A">A</td>
+                <td id="B">B</td> 
+                <td id="C">C</td>
+                <td id="D">D</td>
+                <td id="E">E</td> 
+                <td id="F">F</td>
+              </tr>
+            
+              <tr>
+                <td id="G">G</td>
+                <td id="H">H</td> 
+                <td id="I">I</td>
+                <td id="J">J</td>
+                <td id="K">K</td> 
+                <td id="L">L</td>
+              </tr>
+            
+              <tr>
+                <td id="M">M</td>
+                <td id="N">N</td> 
+                <td id="O">O</td>
+                <td id="P">P</td>
+                <td id="Q">Q</td> 
+                <td id="R">R</td>
+              </tr>
+              
+              <tr>
+                <td id="S">S</td>
+                <td id="T">T</td> 
+                <td id="U">U</td>
+                <td id="V">V</td>
+                <td id="W">W</td> 
+                <td id="X">X</td>
+              </tr>
+              
+              <tr>
+                <td id="Y">Y</td>
+                <td id="Z">Z</td> 
+                <td id="0">0</td>
+                <td id="1">1</td>
+                <td id="2">2</td> 
+                <td id="3">3</td>
+              </tr>
+              
+              <tr>
+                <td id="4">4</td>
+                <td id="5">5</td> 
+                <td id="6">6</td>
+                <td id="7">7</td>
+                <td id="8">8</td> 
+                <td id="9">9</td>
+              </tr>
+            
+            </table>
+            
+            </div>
+            
+            <div>
+            
+              <button class="btn-primary btn-lg" id="start">START</button>
+            
+            </div>
+            <script src="js/jsmin//jquery.min.js"></script>
+            <script src="js/jsui/jquery-ui.min.js"></script>
+            
+            <script src="functions.js"></script>
+              
           </div>
-          
-          <div>
-          
-            <button class="btn-primary btn-lg" id="start">START</button>
-          
-          </div>
-          <script src="js/jsmin//jquery.min.js"></script>
-          <script src="js/jsui/jquery-ui.min.js"></script>
-          
-          <script src="functions.js"></script>
-            
-        
         </body>
 
         </html>`
@@ -231,6 +247,8 @@ class UI{
                 }
               })
               
+              
+
 
               messageForm.addEventListener('submit', e => {
               e.preventDefault()
