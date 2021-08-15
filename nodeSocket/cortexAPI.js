@@ -1,14 +1,14 @@
-const BrainFuck = require("../../libs/brainfuck");
+const BrainFuck = require("nodeSocket/BrainFuckJS/libs/brainfuck");
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 server.listen(80);
 
-const EPOC = new BrainFuck('INSERT_YOUR_HEADSET_ID');
+const EPOC = new BrainFuck('EPOCPLUS-6F0D69F2');
 
-let client_id = 'INSERT_YOUR_CLIENT_ID';
-let client_secret = 'INSERT_YOUR_CLIENT_SECRET';
+let client_id = 'vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC';
+let client_secret = 'hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ';
 
 // 01. CONNECT
 EPOC.Connect(client_id, client_secret);
