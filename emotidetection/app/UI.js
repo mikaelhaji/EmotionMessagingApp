@@ -93,11 +93,10 @@ class UI{
 
         </head>
         <body>
-          <div style = "z-index: 2, position: relative", class: "pages" > 
-              <form class="send-container" id=" id="send-container1">
-                <input type="text" class="message-input" id="message-input1">
-                <button type="submit" class="send-button">Send</button>
-                <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
+          <div style = z-index: 2, position: "relative", class: "pages" > 
+              <form class="send-container1" id="send-container2">
+              <input type="text" class="message-input1" id="message-input2">
+              <button type="submit" class="send-button">Send</button>
               </form>
           </div>
 
@@ -118,68 +117,69 @@ class UI{
 
 
             
-
+            
             <div id="speller_matrix">
-    
-            <table>
-              <tr>
-                <td id="A">A</td>
-                <td id="B">B</td> 
-                <td id="C">C</td>
-                <td id="D">D</td>
-                <td id="E">E</td> 
-                <td id="F">F</td>
-              </tr>
-            
-              <tr>
-                <td id="G">G</td>
-                <td id="H">H</td> 
-                <td id="I">I</td>
-                <td id="J">J</td>
-                <td id="K">K</td> 
-                <td id="L">L</td>
-              </tr>
-            
-              <tr>
-                <td id="M">M</td>
-                <td id="N">N</td> 
-                <td id="O">O</td>
-                <td id="P">P</td>
-                <td id="Q">Q</td> 
-                <td id="R">R</td>
-              </tr>
-              
-              <tr>
-                <td id="S">S</td>
-                <td id="T">T</td> 
-                <td id="U">U</td>
-                <td id="V">V</td>
-                <td id="W">W</td> 
-                <td id="X">X</td>
-              </tr>
-              
-              <tr>
-                <td id="Y">Y</td>
-                <td id="Z">Z</td> 
-                <td id="0">0</td>
-                <td id="1">1</td>
-                <td id="2">2</td> 
-                <td id="3">3</td>
-              </tr>
-              
-              <tr>
-                <td id="4">4</td>
-                <td id="5">5</td> 
-                <td id="6">6</td>
-                <td id="7">7</td>
-                <td id="8">8</td> 
-                <td id="9">9</td>
-              </tr>
-            
-            </table>
+              <div id="speller_matrix_header">Click Here To Move</div>
+                <table>
+                  <tr>
+                    <td id="A">A</td>
+                    <td id="B">B</td> 
+                    <td id="C">C</td>
+                    <td id="D">D</td>
+                    <td id="E">E</td> 
+                    <td id="F">F</td>
+                  </tr>
+                
+                  <tr>
+                    <td id="G">G</td>
+                    <td id="H">H</td> 
+                    <td id="I">I</td>
+                    <td id="J">J</td>
+                    <td id="K">K</td> 
+                    <td id="L">L</td>
+                  </tr>
+                
+                  <tr>
+                    <td id="M">M</td>
+                    <td id="N">N</td> 
+                    <td id="O">O</td>
+                    <td id="P">P</td>
+                    <td id="Q">Q</td> 
+                    <td id="R">R</td>
+                  </tr>
+                  
+                  <tr>
+                    <td id="S">S</td>
+                    <td id="T">T</td> 
+                    <td id="U">U</td>
+                    <td id="V">V</td>
+                    <td id="W">W</td> 
+                    <td id="X">X</td>
+                  </tr>
+                  
+                  <tr>
+                    <td id="Y">Y</td>
+                    <td id="Z">Z</td> 
+                    <td id="0">0</td>
+                    <td id="1">1</td>
+                    <td id="2">2</td> 
+                    <td id="3">3</td>
+                  </tr>
+                  
+                  <tr>
+                    <td id="4">4</td>
+                    <td id="5">5</td> 
+                    <td id="6">6</td>
+                    <td id="7">7</td>
+                    <td id="8">8</td> 
+                    <td id="9">9</td>
+                  </tr>
+                
+                </table>
             
             </div>
             
+
             <div>
             
               <button class="btn-primary btn-lg" id="start">START</button>
@@ -198,9 +198,14 @@ class UI{
         }
 
 
+
+
         let setupHTML = () => {
 
             setTimeout(() => {
+
+              // const dragElement = document.getElementById("mydiv");
+              this.dragElement(document.getElementById("mydiv"));
 
               const socket = this.io
 
@@ -209,6 +214,9 @@ class UI{
               this.props.startP300 = document.getElementById('start')
               const messageForm = document.getElementById('send-container2')
               const messageInput = document.getElementById('message-input2')
+              const messageForm2 = document.getElementById('message-input1')
+              const messageInput2 = document.getElementById('send-container1')
+
               this.loader = document.getElementsByClassName('lds-roller')[0]
               console.log(this.loader)
               
@@ -279,6 +287,64 @@ class UI{
                  })
          
               })
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+              messageInput2.addEventListener('input', (e) => {
+                if (e.target.value !== '') {
+                  if (e.target.value.length == 1) { // potential error
+                    if (Date.now() - this.props.timestamps.startEEG > 5*1000) {
+                      console.log('start message');
+                      this.props.timestamps.start = Date.now() - 5*1000
+                    }
+                    else {
+                      console.log('start message');
+                      this.props.timestamps.start = Date.now()
+                    }
+                  }
+                }
+                else {
+                  console.log('nothing in box');
+                  this.props.timestamps.start = null
+                }
+              })
+              
+                
+            
+              messageForm2.addEventListener('submit', e => {
+              e.preventDefault()
+              const message = messageInput2.value
+              this._onMessageSend(message).then((m_color) => {
+                  console.log('COLOR',m_color)
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                  socket.emit('send-chat-message', {message: message, color: m_color})
+                  messageInput2.value = ''
+              }).catch((error) => {
+                  this._hideLoader()
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                  socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                  alert("Error detecting your emotion: "+error)
+                  this._appendMessage(`You: ${message}`)
+                  messageInput2.value = ''
+                  return
+        
+                 })
+         
+              })
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
             
             }, 1000)
 
@@ -562,6 +628,50 @@ class UI{
         // museButton.style.display = 'none'
         this.props.timestamps.startEEG =  Date.now()
     }
+
+
+    dragElement = (elmnt) => {
+      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      if (document.getElementById(elmnt.id + "header")) {
+        // if present, the header is where you move the DIV from:
+        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+      } else {
+        // otherwise, move the DIV from anywhere inside the DIV:
+        elmnt.onmousedown = dragMouseDown;
+      }
+    
+      dragMouseDown = (e) => {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+      }
+    
+      elementDrag = (e) => {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      }
+    
+      closeDragElement= () => {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+
 }
 export {UI}
 

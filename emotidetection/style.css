@@ -156,10 +156,18 @@ flex-grow: 1;
   
   #speller_matrix {
     text-align: center;
-    position: fixed;
+    position: absolute; /*was fixed */
     top:50%;
     left:50%;
     transform: translate(-50%,-50%); /* xy translate according to element dimensions */
+  }
+
+  #speller_matrix_header {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    background-color: #2196F3;
+    color: #fff;
   }
   
   body {
