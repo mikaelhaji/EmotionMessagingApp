@@ -74,10 +74,26 @@ def auth():
 
     return 'Classifying emotions'
 
-@app.route('/sub', methods=['POST', 'GET'])
-def json_example():
+@app.route('/p300', methods=['POST', 'GET'])
+def p300():
+    
+    if request.method == 'POST':
 
-    return 'sub'
+        request_data = request.get_json()
+
+        with open(f"sample_p300.pkl", "wb") as outfile:
+            pickle.dump(request_data, outfile)
+
+        print(request_data)
+
+        # Create UI for auth stuff
+
+        preds = [1,2,3,4,5]
+
+        
+        return json.dumps(preds) # list(preds)
+
+    return 'p300'
 
 if __name__ == '__main__':
     # run app in debug mode on port 5000
