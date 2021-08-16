@@ -111,7 +111,7 @@ class UI{
             
             
             <form class="send-container" id="send-container2">
-              <input type="text" class="message-input" id="message-input1">
+              <input type="text" class="message-input" id="message-input2">
               <button type="submit" class="send-button">Send</button>
               <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
             </form>
@@ -204,8 +204,9 @@ class UI{
 
               const socket = this.io
 
-              // console.log(socket)
+              console.log(socket)
               this.messageContainer = document.getElementById('message-container')
+              this.props.startP300 = document.getElementById('start')
               const messageForm = document.getElementById('send-container2')
               const messageInput = document.getElementById('message-input2')
               this.loader = document.getElementsByClassName('lds-roller')[0]
@@ -247,6 +248,14 @@ class UI{
                 }
               })
               
+              this.props.startP300.onclick  = (e) => {
+
+                console.log("clicked")
+                e.preventDefault()
+                this.runParadigm()
+                
+              }
+                
               
 
 
@@ -412,6 +421,142 @@ class UI{
       })
     }
 
+    runParadigm = () => {
+
+      let light_unlit = (char_index,state) => {
+        
+        let stim_colour = null;
+        
+        if(state==0) {
+          stim_colour = "white";
+        } else {
+          stim_colour = "red";
+        }
+        
+        switch(char_index) {
+        case 1: document.getElementById('A').style.color =  stim_colour; break;
+        case 2: document.getElementById('B').style.color =  stim_colour; break;
+        case 3: document.getElementById('C').style.color =  stim_colour; break;
+        case 4: document.getElementById('D').style.color =  stim_colour; break;
+        case 5: document.getElementById('E').style.color =  stim_colour; break;
+        case 6: document.getElementById('F').style.color =  stim_colour; break;
+        case 7: document.getElementById('G').style.color =  stim_colour; break;
+        case 8: document.getElementById('H').style.color =  stim_colour; break;
+        case 9: document.getElementById('I').style.color =  stim_colour; break;
+        case 10: document.getElementById('J').style.color =  stim_colour; break;
+        case 11: document.getElementById('K').style.color =  stim_colour; break;
+        case 12: document.getElementById('L').style.color =  stim_colour; break;
+        case 13: document.getElementById('M').style.color =  stim_colour; break;
+        case 14: document.getElementById('N').style.color =  stim_colour; break;
+        case 15: document.getElementById('O').style.color =  stim_colour; break;
+        case 16: document.getElementById('P').style.color =  stim_colour; break;
+        case 17: document.getElementById('Q').style.color =  stim_colour; break;
+        case 18: document.getElementById('R').style.color =  stim_colour; break;
+        case 19: document.getElementById('S').style.color =  stim_colour; break;
+        case 20: document.getElementById('T').style.color =  stim_colour; break;
+        case 21: document.getElementById('U').style.color =  stim_colour; break;
+        case 22: document.getElementById('V').style.color =  stim_colour; break;
+        case 23: document.getElementById('W').style.color =  stim_colour; break;
+        case 24: document.getElementById('X').style.color =  stim_colour; break;
+        case 25: document.getElementById('Y').style.color =  stim_colour; break;
+        case 26: document.getElementById('Z').style.color =  stim_colour; break;
+        case 27: document.getElementById('0').style.color =  stim_colour; break;
+        case 28: document.getElementById('1').style.color =  stim_colour; break;
+        case 29: document.getElementById('2').style.color =  stim_colour; break;
+        case 30: document.getElementById('3').style.color =  stim_colour; break;
+        case 31: document.getElementById('4').style.color =  stim_colour; break;
+        case 32: document.getElementById('5').style.color =  stim_colour; break;
+        case 33: document.getElementById('6').style.color =  stim_colour; break;
+        case 34: document.getElementById('7').style.color =  stim_colour; break;
+        case 35: document.getElementById('8').style.color =  stim_colour; break;
+        case 36: document.getElementById('9').style.color =  stim_colour; break;
+        default: 
+        }
+      
+      }
+
+      let shuffle = (array) => {
+        let currentIndex = array.length, temporaryValue, randomIndex;
+    
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+    
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+    
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+    
+        return array;
+      }
+
+      let flash = () => {
+        
+        let d = new Date();
+        let m = d.getMinutes();
+        let s = d.getSeconds();
+        let n = d.getMilliseconds();
+        console.log(m*60*1000+1000*s+n); // output second+ms to console log
+                      
+        if(i<c) {
+          
+          let flash_index = new_chars[i];
+          
+          light_unlit(flash_index,1); // highlight element
+          
+          setTimeout(
+            () => {
+              light_unlit(flash_index,0); // revert element to default colour after flash
+              
+              let d = new Date();
+              let m = d.getMinutes();
+              let s = d.getSeconds();
+              let n = d.getMilliseconds();
+              console.log(m*60000+1000*s+n); // output second+ms to console log
+              
+              setTimeout(flash,ISI);
+            }
+          ,flash_time);
+          
+        }
+      
+        i++;
+      
+      }
+
+      let number_of_trials = 5;
+      
+      let all_chars = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
+      let new_chars = shuffle(all_chars);
+      number_of_trials--;
+      
+      for (let a=0; a<number_of_trials; a++) {
+        let temp_chars = shuffle(all_chars);
+        new_chars = new_chars.concat(temp_chars);
+      }
+            
+      let c=new_chars.length;
+      let i=0;
+      
+      let d = new Date();
+      let m = d.getMinutes();
+      let s = d.getSeconds();
+      let n = d.getMilliseconds();
+      console.log(m*60*1000+1000*s+n); // output second+ms to console log
+      setTimeout(flash,2000);
+      // 2 second pause before stimulus presentation starts
+      
+      let flash_time = 100;
+      let ISI = 100;
+    
+      // recursive function to keep calling setTimeout until all characters have flashed
+          
+    }
+
     _deviceConnected = () => {
         // let museButton = document.getElementById(`${this.props.id}`).querySelector(`[id="musebutton"]`)
         // museButton.style.display = 'none'
@@ -420,158 +565,4 @@ class UI{
 }
 export {UI}
 
-
-this.props.loadButton.onclick = (e) => {
-            
-  e.preventDefault()
-  this._setOpacity(this.pages.currdiv, this.pages.div3) // does nothing, i'm guessing that the page isn't refreshing because there is now a button of type button
-  this._postForm()
-
-  // return false;
-
-
-}
-
-messageForm.addEventListener('submit', e => {
-  e.preventDefault()
-})
-	
-this.props.startP300.onclick  = (e) => {
-  e.preventDefault()
-
-  deeznuts = () => {
-
-    number_of_trials = 5;
-    
-    let all_chars = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
-    new_chars = shuffle(all_chars);
-    number_of_trials--;
-    
-    for(a=0; a<number_of_trials; a++) {
-      temp_chars = shuffle(all_chars);
-      new_chars = new_chars.concat(temp_chars);
-    }
-          
-    c=new_chars.length;
-    i=0;
-    
-    let d = new Date();
-    let m = d.getMinutes();
-    let s = d.getSeconds();
-    let n = d.getMilliseconds();
-    console.log(m*60*1000+1000*s+n); // output second+ms to console log
-    setTimeout(flash,2000);
-    // 2 second pause before stimulus presentation starts
-    
-    var flash_time = 100;
-    var ISI = 100;
-    
-     flash = () => {
-      
-      var d = new Date();
-      var m = d.getMinutes();
-      var s = d.getSeconds();
-      var n = d.getMilliseconds();
-      console.log(m*60*1000+1000*s+n); // output second+ms to console log
-                    
-      if(i<c) {
-        
-        var flash_index = new_chars[i];
-        
-        light_unlit(flash_index,1); // highlight element
-        
-        setTimeout(
-          function() {
-            light_unlit(flash_index,0); // revert element to default colour after flash
-            
-            var d = new Date();
-            var m = d.getMinutes();
-            var s = d.getSeconds();
-            var n = d.getMilliseconds();
-            console.log(m*60000+1000*s+n); // output second+ms to console log
-            
-            setTimeout(flash,ISI);
-          }
-        ,flash_time);
-        
-      }
-    
-      i++;
-    
-    }
-    // recursive function to keep calling setTimeout until all characters have flashed
-          
-    light_unlit = (char_index,state) => {
-      
-      if(state==0) {
-        stim_colour = "white";
-      } else {
-        stim_colour = "red";
-      }
-      
-      switch(char_index) {
-      case 1: $("#A").css("color",stim_colour); break;
-      case 2: $("#B").css("color",stim_colour); break;
-      case 3: $("#C").css("color",stim_colour); break;
-      case 4: $("#D").css("color",stim_colour); break;
-      case 5: $("#E").css("color",stim_colour); break;
-      case 6: $("#F").css("color",stim_colour); break;
-      case 7: $("#G").css("color",stim_colour); break;
-      case 8: $("#H").css("color",stim_colour); break;
-      case 9: $("#I").css("color",stim_colour); break;
-      case 10: $("#J").css("color",stim_colour); break;
-      case 11: $("#K").css("color",stim_colour); break;
-      case 12: $("#L").css("color",stim_colour); break;
-      case 13: $("#M").css("color",stim_colour); break;
-      case 14: $("#N").css("color",stim_colour); break;
-      case 15: $("#O").css("color",stim_colour); break;
-      case 16: $("#P").css("color",stim_colour); break;
-      case 17: $("#Q").css("color",stim_colour); break;
-      case 18: $("#R").css("color",stim_colour); break;
-      case 19: $("#S").css("color",stim_colour); break;
-      case 20: $("#T").css("color",stim_colour); break;
-      case 21: $("#U").css("color",stim_colour); break;
-      case 22: $("#V").css("color",stim_colour); break;
-      case 23: $("#W").css("color",stim_colour); break;
-      case 24: $("#X").css("color",stim_colour); break;
-      case 25: $("#Y").css("color",stim_colour); break;
-      case 26: $("#Z").css("color",stim_colour); break;
-      case 27: $("#0").css("color",stim_colour); break;
-      case 28: $("#1").css("color",stim_colour); break;
-      case 29: $("#2").css("color",stim_colour); break;
-      case 30: $("#3").css("color",stim_colour); break;
-      case 31: $("#4").css("color",stim_colour); break;
-      case 32: $("#5").css("color",stim_colour); break;
-      case 33: $("#6").css("color",stim_colour); break;
-      case 34: $("#7").css("color",stim_colour); break;
-      case 35: $("#8").css("color",stim_colour); break;
-      case 36: $("#9").css("color",stim_colour); break;
-      default: 
-      }
-    
-    }
-    
-    shuffle = (array) => {
-      var currentIndex = array.length, temporaryValue, randomIndex;
-
-      // While there remain elements to shuffle...
-      while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-      }
-
-      return array;
-    }
-        
-  }
-  
-}
-  
       
