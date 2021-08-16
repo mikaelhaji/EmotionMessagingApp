@@ -94,14 +94,14 @@ class UI{
         </head>
         <body>
           <div style = "z-index: 2, position: relative", class: "pages" > 
-          <form class="send-container">
-              <input type="text" class="message-input">
-              <button type="submit" class="send-button">Send</button>
-              <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
-            </form>
+              <form class="send-container" id=" id="send-container1">
+                <input type="text" class="message-input" id="message-input1">
+                <button type="submit" class="send-button">Send</button>
+                <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
+              </form>
           </div>
 
-          <div style = "z-index: 1, opacity: 0, position: relative", class: "pages" >
+          <div style = "z-index: 1, opacity: 100, position: relative", class: "pages" >
 
 
             <div id="main-div">
@@ -110,10 +110,10 @@ class UI{
             </div>
             
             
-            <form id="send-container">
-              <input type="text" id="message-input">
-              <button type="submit" id="send-button">Send</button>
-              <button style='position: relative;' type="button", id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+            <form class="send-container" id="send-container2">
+              <input type="text" class="message-input" id="message-input1">
+              <button type="submit" class="send-button">Send</button>
+              <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
             </form>
 
 
@@ -191,6 +191,7 @@ class UI{
             <script src="functions.js"></script>
               
           </div>
+
         </body>
 
         </html>`
@@ -205,8 +206,8 @@ class UI{
 
               // console.log(socket)
               this.messageContainer = document.getElementById('message-container')
-              const messageForm = document.getElementById('send-container')
-              const messageInput = document.getElementById('message-input')
+              const messageForm = document.getElementById('send-container2')
+              const messageInput = document.getElementById('message-input2')
               this.loader = document.getElementsByClassName('lds-roller')[0]
               console.log(this.loader)
               
@@ -436,13 +437,13 @@ messageForm.addEventListener('submit', e => {
 })
 	
 this.props.startP300.onclick  = (e) => {
-  
-}
+  e.preventDefault()
+
   deeznuts = () => {
-    
+
     number_of_trials = 5;
     
-    var all_chars = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
+    let all_chars = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
     new_chars = shuffle(all_chars);
     number_of_trials--;
     
@@ -454,10 +455,10 @@ this.props.startP300.onclick  = (e) => {
     c=new_chars.length;
     i=0;
     
-    var d = new Date();
-    var m = d.getMinutes();
-    var s = d.getSeconds();
-    var n = d.getMilliseconds();
+    let d = new Date();
+    let m = d.getMinutes();
+    let s = d.getSeconds();
+    let n = d.getMilliseconds();
     console.log(m*60*1000+1000*s+n); // output second+ms to console log
     setTimeout(flash,2000);
     // 2 second pause before stimulus presentation starts
@@ -465,7 +466,7 @@ this.props.startP300.onclick  = (e) => {
     var flash_time = 100;
     var ISI = 100;
     
-    function flash() {
+     flash = () => {
       
       var d = new Date();
       var m = d.getMinutes();
@@ -500,7 +501,7 @@ this.props.startP300.onclick  = (e) => {
     }
     // recursive function to keep calling setTimeout until all characters have flashed
           
-    function light_unlit(char_index,state) {
+    light_unlit = (char_index,state) => {
       
       if(state==0) {
         stim_colour = "white";
@@ -550,7 +551,7 @@ this.props.startP300.onclick  = (e) => {
     
     }
     
-    function shuffle(array) {
+    shuffle = (array) => {
       var currentIndex = array.length, temporaryValue, randomIndex;
 
       // While there remain elements to shuffle...
@@ -570,4 +571,7 @@ this.props.startP300.onclick  = (e) => {
     }
         
   }
+  
+}
+  
       
