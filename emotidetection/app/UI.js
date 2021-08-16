@@ -97,8 +97,8 @@ class UI{
         
         <div style = "z-index: 2; position: absolute;" class: "pages" > 
           
-            <form class="send-container" id="send-container2">
-              <input type="text" class="message-input" id="message-input2">
+            <form class="send-container" id="send-container">
+              <input type="text" class="message-input" id="message-input">
               <button type="submit" class="send-button">Send</button>
               <button style='display: none' type="button", class="brainsatplay-default-button" id="devicebutton">Connect BCI</button>
             </form>
@@ -149,6 +149,7 @@ class UI{
             </div>
 
         </div>
+
         <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" >
           
           
@@ -247,34 +248,34 @@ class UI{
 
               this.socket = this.io
 
-              dragElement(document.getElementById("mydiv"));
+              this.dragElement(document.getElementById("mydiv"));
 
-              console.log(socket)
+              console.log(this.socket)
               this.messageContainer = document.getElementById('message-container')
               this.props.startP300 = document.getElementById('start')
-              const messageForm2 = document.getElementById('send-container2')
-              const messageInput2 = document.getElementById('message-input2')
-              const messageForm1 = document.getElementById('send-container1')
-              console.log(messageForm1)
-              const messageInput1 = document.getElementById('message-input1')
+
+              const messageInput = document.getElementById('message-input')
+              const messageForm = document.getElementById('send-container')
+              console.log(messageForm)
+
               this.loader = document.getElementsByClassName('lds-roller')[0]
               console.log(this.loader)
               
               const name = prompt('What is your name?') // not necessary 
               this._appendMessage('[ You joined ]')
               this._appendMessage('[ Authentication Required ]')
-              socket.emit('new-user', name)
+              this.socket.emit('new-user', name)
 
-              socket.on('chat-message', data => {
+              this.socket.on('chat-message', data => {
               this._appendMessage(`${data.name}: ${data.message}`, data.color)
               })
 
-              socket.on('user-connected', name => {
+              this.socket.on('user-connected', name => {
               // console.log(name)
               this._appendMessage(`[ ${name} connected ]`)
               })
 
-              socket.on('user-disconnected', name => {
+              this.socket.on('user-disconnected', name => {
               this._appendMessage(`[ ${name} disconnected ]`)
               })
 
@@ -341,72 +342,74 @@ class UI{
 
               
 
-              messageInput2.addEventListener('input', (e) => {
-                if (e.target.value !== '') {
-                  if (e.target.value.length == 1) { // potential error
-                    if (Date.now() - this.props.timestamps.startEEG > 5*1000) {
-                      console.log('start message');
-                      this.props.timestamps.start = Date.now() - 5*1000
-                    }
-                    else {
-                      console.log('start message');
-                      this.props.timestamps.start = Date.now()
-                    }
+            messageInput.addEventListener('input', (e) => {
+              if (e.target.value !== '') {
+                if (e.target.value.length == 1) { // potential error
+                  if (Date.now() - this.props.timestamps.startEEG > 5*1000) {
+                    console.log('start message');
+                    this.props.timestamps.start = Date.now() - 5*1000
+                  }
+                  else {
+                    console.log('start message');
+                    this.props.timestamps.start = Date.now()
                   }
                 }
-                else {
-                  console.log('nothing in box');
-                  this.props.timestamps.start = null
-                }
-              })
+              }
+              else {
+                console.log('nothing in box');
+                this.props.timestamps.start = null
+              }
+            })
 
-              messageForm2.addEventListener('submit', e => {
-                e.preventDefault()
-                const message = messageInput2.value
-                this._onMessageSend(message).then((m_color) => {
-                    console.log('COLOR',m_color)
-                    // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                    this.socket.emit('send-chat-message', {message: message, color: m_color})
-                    messageInput2.value = ''
-                }).catch((error) => {
-                    this._hideLoader()
-                    // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                    this.socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
-                    alert("Error detecting your emotion: "+error)
-                    this._appendMessage(`You: ${message}`)
-                    messageInput2.value = ''
-                    return
-          
-                   })
-           
-                })          
-            
-              messageForm1.addEventListener('submit', e => {
-                e.preventDefault()
-                const message = messageInput2.value
-                this.socket.emit('auth', message)
-         
-              })          
-          
-            messageForm1.addEventListener('submit', e => {
+            messageForm.addEventListener('submit', e => {
               e.preventDefault()
               const message = messageInput2.value
-              this._auth(message) // .then((m_color) => {
-              //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-              //     socket.emit('send-chat-message', {message: message, color: m_color})
-              //     messageInput2.value = ''
-              // }).catch((error) => {
-              //     this._hideLoader()
-              //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-              //     socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
-              //     alert("Error detecting your emotion: "+error)
-              //     this._appendMessage(`You: ${message}`)
-              //     messageInput2.value = ''
-              //     return
+              this._onMessageSend(message).then((m_color) => {
+                  console.log('COLOR',m_color)
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                  this.socket.emit('send-chat-message', {message: message, color: m_color})
+                  messageInput2.value = ''
+              }).catch((error) => {
+                  this._hideLoader()
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                  this.socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                  alert("Error detecting your emotion: "+error)
+                  this._appendMessage(`You: ${message}`)
+                  messageInput2.value = ''
+                  return
         
-              //    })
+                  })
+          
+              })          
+            
+            // messageForm1.addEventListener('submit', e => {
+            //   e.preventDefault()
+            //   const message = messageInput2.value
+            //   this.socket.emit('auth', message)
+
+            // match to form used for auth TODO
+        
+            // })          
+          
+            // messageForm.addEventListener('submit', e => {
+            //   e.preventDefault()
+            //   const message = messageInput2.value
+            //   this._auth(message) // .then((m_color) => {
+            //   //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+            //   //     socket.emit('send-chat-message', {message: message, color: m_color})
+            //   //     messageInput2.value = ''
+            //   // }).catch((error) => {
+            //   //     this._hideLoader()
+            //   //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+            //   //     socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+            //   //     alert("Error detecting your emotion: "+error)
+            //   //     this._appendMessage(`You: ${message}`)
+            //   //     messageInput2.value = ''
+            //   //     return
+        
+            //   //    })
        
-            })
+            // })
               
             this.props.startP300.onclick  = (e) => {
 
@@ -416,7 +419,7 @@ class UI{
               
             }
           
-          }, 1000)
+        }, 1000)
 
       }
 
@@ -428,37 +431,39 @@ class UI{
 
 
   dragElement = (elmnt) => {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
-    // if present, the header is where you move the DIV from:
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    // otherwise, move the DIV from anywhere inside the DIV:
-    elmnt.onmousedown = dragMouseDown;
+    this.pos1 = 0, this.pos2 = 0, this.pos3 = 0, this.pos4 = 0;
+    this.elmnt = elmnt
+    if (document.getElementById(this.elmnt.id + "header")) {
+      // if present, the header is where you move the DIV from:
+      document.getElementById(this.elmnt.id + "header").onmousedown = this.dragMouseDown;
+    } else {
+      // otherwise, move the DIV from anywhere inside the DIV:
+      this.elmnt.onmousedown = this.dragMouseDown;
+    }
   }
 
   dragMouseDown = (e) => {
     e = e || window.event;
     e.preventDefault();
     // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
+    this.pos3 = e.clientX;
+    this.pos4 = e.clientY;
+    document.onmouseup = this.closeDragElement;
     // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
+    document.onmousemove = this.elementDrag;
   }
 
   elementDrag = (e) => {
     e = e || window.event;
     e.preventDefault();
     // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+    this.pos1 = this.pos3 - e.clientX;
+    this.pos2 = this.pos4 - e.clientY;
+    this.pos3 = e.clientX;
+    this.pos4 = e.clientY;
     // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    this.elmnt.style.top = (this.elmnt.offsetTop - this.pos2) + "px";
+    this.elmnt.style.left = (this.elmnt.offsetLeft - this.pos1) + "px";
   }
 
   closeDragElement = () => {
@@ -466,11 +471,6 @@ class UI{
     document.onmouseup = null;
     document.onmousemove = null;
   }
-}
-
-
-
-
 
 
   _userAdded = (userData) => {
@@ -491,27 +491,28 @@ _userRemoved = (userData) => {
 
   _showLoader = () => {
     this.loader.style.visibility = "visible";
+  }
 
-         if (finalData[0].length < fs*5) {
-          this._hideLoader()
-          reject("We are still collecting data, no emotion detected")
-         }
+        //  if (finalData[0].length < fs*5) {
+        //   this._hideLoader()
+        //   reject("We are still collecting data, no emotion detected")
+        //  }
 
-        // data.forEach((item, index, array) => {
-        //   console.log(array)
-        // })
+        // // data.forEach((item, index, array) => {
+        // //   console.log(array)
+        // // })
  
-         let url = 'http://127.0.0.1:5000/emotions'
-         let body = {
-             finalData,
-             fs
-         }
+        //  let url = 'http://127.0.0.1:5000/emotions'
+        //  let body = {
+        //      finalData,
+        //      fs
+        //  }
  
-        let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+        // let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        // if (!response.ok) {
+        //   throw new Error(`HTTP error! status: ${response.status}`);
+        // }
 
   _hideLoader = () => {
     this.loader.style.visibility = "hidden";
@@ -840,7 +841,7 @@ _userRemoved = (userData) => {
     var input2 = document.getElementById('psw').value;
     alert(input2)
   }
-}
+
 }
 
 export {UI}
