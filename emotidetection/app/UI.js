@@ -23,6 +23,12 @@ class UI{
             },
         }
 
+      this.pages = {
+          div1: null,
+          div2: null,
+          currdiv: null
+      }
+
         this.colors = ['red', 'blue', 'green', 'yellow'],
         this.messageCount = 0,
         this.characterSequence = [], 
@@ -95,13 +101,7 @@ class UI{
       <body>
         
         
-        <div style = "z-index: 2; position: absolute;" class: "pages" > 
-          
-            <form class="send-container" id="send-container">
-              <input type="text" class="message-input" id="message-input">
-              <button type="submit" class="send-button">Send</button>
-              <button style='display: none' type="button", class="brainsatplay-default-button" id="devicebutton">Connect BCI</button>
-            </form>
+        <div style = "z-index: 2; position: absolute;" class: "pages" id="div1"> 
 
             <button onclick="document.getElementById('id01').style.display='block'" style='position: relative;' type="button", class="brainsatplay-default-button">Authenticate Emotiv Stream</button>
             <!-- The Modal -->
@@ -139,19 +139,19 @@ class UI{
               </form>
             </div>
 
-
-
-            
-
-            <div id="main-div">
-            <div id="message-container"></div>
-            <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            </div>
-
         </div>
 
-        <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" >
-          
+        <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" id="div2">
+
+          <div id="main-div">
+          <div id="message-container"></div>
+          <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+          <form class="send-container" id="send-container">
+            <input type="text" class="message-input" id="message-input">
+            <button type="submit" class="send-button">Send</button>
+            <button style='display: none' type="button", class="brainsatplay-default-button" id="devicebutton">Connect BCI</button>
+          </form>
           
           <div id="speller_matrix">
   
@@ -250,6 +250,9 @@ class UI{
 
               this.dragElement(document.getElementById("mydiv"));
 
+              this.pages.div1 = document.getElementById('div1')
+              this.pages.div2 = document.getElementById('div2')
+
               console.log(this.socket)
               this.messageContainer = document.getElementById('message-container')
               this.props.startP300 = document.getElementById('start')
@@ -269,7 +272,7 @@ class UI{
               
               const name = prompt('What is your name?') // not necessary 
               this._appendMessage('[ You joined ]')
-              this._appendMessage('[ Authentication Required ]')
+              // this._appendMessage('[ Authentication Required ]')
               this.socket.emit('new-user', name)
 
               this.socket.on('chat-message', data => {
@@ -283,6 +286,10 @@ class UI{
 
               this.socket.on('user-disconnected', name => {
               this._appendMessage(`[ ${name} disconnected ]`)
+              })
+
+              this.socket.on('succesful-connection', e => {
+                this._setOpacity(this.pages.div1, this.pages.div2)
               })
 
               this.socket.on('P300data', data => {

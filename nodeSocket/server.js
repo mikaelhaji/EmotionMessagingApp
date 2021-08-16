@@ -394,6 +394,7 @@ io.on('connection', socket => {
     c[socket.id] = new Cortex(userAuth, socketUrl)
     let streams = ['pow']
     c[socket.id].sub(streams)
+    socket.emit("succesful-connection", "success!")
 
   })
 
