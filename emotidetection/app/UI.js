@@ -141,18 +141,18 @@ class UI{
 
         </div>
 
-        <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" id="div2">
 
+        <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" id="div2" >
+          
           <div id="main-div">
           <div id="message-container"></div>
           <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 
-        </div>
-
-
-
-        <div style = "z-index: 1; opacity: 100; position: relative;", class: "pages" >
-          
+          <form class="send-container" id="send-container">
+            <input type="text" class="message-input" id="message-input">
+            <button type="submit" class="send-button">Send</button>
+            <button style='display: none' type="button", class="brainsatplay-default-button" id="devicebutton">Connect BCI</button>
+          </form>
           
           <div id="speller_matrix">
             <div id="mydiv">
@@ -341,6 +341,8 @@ class UI{
 
                 if (this.startIndex < this.stopIndex) {
                   console.log(this.startIndex, this.stopIndex)
+
+                  
                 }
 
               })
@@ -810,14 +812,15 @@ _userRemoved = (userData) => {
         // console.log(this.characterSequence)
       } else {
         this.props.timestamps.stopTrial = Date.now()
-        this._sendLabels()
+        console.log("done")
+        this.socket.emit('P300done')
       }
     
       i++;
     
     }
 
-    let number_of_trials = 5;
+    let number_of_trials = 2;
     
     let all_chars = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
     let new_chars = shuffle(all_chars);
