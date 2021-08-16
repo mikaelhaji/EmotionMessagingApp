@@ -110,7 +110,7 @@ class UI{
             class="close" title="Close Modal">&times;</span>
 
               <!-- Modal Content -->
-              <form class="modal-content animate">
+              <form class="modal-content animate" id="authform">
                 
                 <div class="container">
                   <br>
@@ -127,7 +127,7 @@ class UI{
                   <br>
                   <br>
                   <br>
-                  <button type="button" onclick="document.getElementById('id01').style.display='none'">Login</button>
+                  <button type="submit" id="authsubmitbutton">Login</button>
                   <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
                   <br>
                   <br>
@@ -258,6 +258,12 @@ class UI{
               const messageForm = document.getElementById('send-container')
               console.log(messageForm)
 
+              const authDiv = document.getElementById('id01')
+              const authForm = document.getElementById('authform')
+
+              const uid = document.getElementById('uname')
+              const usecret = document.getElementById('psw')
+
               this.loader = document.getElementsByClassName('lds-roller')[0]
               console.log(this.loader)
               
@@ -382,14 +388,17 @@ class UI{
           
               })          
             
-            // messageForm1.addEventListener('submit', e => {
-            //   e.preventDefault()
-            //   const message = messageInput2.value
-            //   this.socket.emit('auth', message)
+            authForm.addEventListener('submit', e => {
+              e.preventDefault()
+              const uid_val = uid.value
+              const usecret_val = usecret.value
+              this.socket.emit('auth', {userid: uid_val, usersecret: usecret_val})
+              authDiv.style.display='none'
+
 
             // match to form used for auth TODO
         
-            // })          
+            })          
           
             // messageForm.addEventListener('submit', e => {
             //   e.preventDefault()
@@ -518,6 +527,14 @@ _userRemoved = (userData) => {
     this.loader.style.visibility = "hidden";
 
   }
+
+  _setOpacity = (inp, out) => {
+    inp.style.opacity = "0";
+    out.style.opacity = "1";
+    inp.style.display = 'none';
+    out.style.display = "";
+    this.pages.currdiv = out;
+  } 
 
   _appendMessage = (message, color="black") => { // add conditional that checks user id 
     ++this.messageCount;
