@@ -606,7 +606,7 @@ class UI{
 }
 export {UI}
 
-console.log("helo")
+// console.log("helo")
 
 
 // anush is smelly
