@@ -29,6 +29,7 @@ class UI{
         this.characterSequence = [], 
 
         this.io = null
+        this.socket = null
 
         // Port Definition
         this.ports = {
@@ -100,11 +101,11 @@ class UI{
               <form class="send-container" id="send-container1" style="position: absolute; top: 100px;">
                 <input type="text" class="message-input" id="message-input1">
                 <button type="submit" class="send-button">Send</button>
-                <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
+                <button style='position: relative;' type="button", class="brainsatplay-default-button">Connect BCI</button>
               </form>
           </div>
 
-          <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" >
+          <div style = "z-index: 1; opacity: 100; position: relative;", class: "pages" >
 
             <div id="main-div">
               <div id="message-container"></div>
@@ -115,7 +116,7 @@ class UI{
             <form class="send-container" id="send-container2">
               <input type="text" class="message-input" id="message-input2">
               <button type="submit" class="send-button">Send</button>
-              <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
+              <button style='position: relative;' type="button", class="brainsatplay-default-button" id="devicebutton">Connect BCI</button>
             </form>
 
             <div id="speller_matrix">
@@ -201,9 +202,9 @@ class UI{
 
             setTimeout(() => {
 
-              const socket = this.io
+              this.socket = this.io
 
-              console.log(socket)
+              console.log(this.socket)
               this.messageContainer = document.getElementById('message-container')
               this.props.startP300 = document.getElementById('start')
               const messageForm2 = document.getElementById('send-container2')
@@ -216,20 +217,83 @@ class UI{
               
               const name = prompt('What is your name?') // not necessary 
               this._appendMessage('You joined')
-              socket.emit('new-user', name)
+              this.socket.emit('new-user', name)
 
-              socket.on('chat-message', data => {
-              this._appendMessage(`${data.name}: ${data.message}`, data.color)
+              this.socket.on('chat-message', data => {
+                this._appendMessage(`${data.name}: ${data.message}`, data.color)
               })
 
-              socket.on('user-connected', name => {
-              // console.log(name)
-              this._appendMessage(`${name} connected`)
+              this.socket.on('user-connected', name => {
+                // console.log(name)
+                this._appendMessage(`${name} connected`)
               })
 
-              socket.on('user-disconnected', name => {
-              this._appendMessage(`${name} disconnected`)
+              this.socket.on('user-disconnected', name => {
+                this._appendMessage(`${name} disconnected`)
               })
+
+              this.socket.on('P300data', data => {
+                // console.log("done")
+                // console.log(data) // array of x size, 70 features per row, .pow = features, .time = The timestamp of this sample. 
+                //                   //It is the number of seconds that have elapsed since 00:00:00 Thursday, 1 January 1970 UTC.
+                let indexOfSmallest = (a) => {
+                  var lowest = 0;
+                  for (var i = 1; i < a.length; i++) {
+                    if (a[i] < a[lowest]) lowest = i;
+                  }
+                  return lowest;
+                  }
+                
+                let approx_start = []
+                let approx_end = []
+                console.log(data.length)
+                for (let i = 0; i < data.length; i++) {
+                  if (data[i].time*1000 <= this.props.timestamps.startTrial+(1/8*1000) && data[i].time*1000 >= this.props.timestamps.startTrial-(1/8*1000)) {
+                    console.log(data[i].time*1000, this.props.timestamps.startTrial+(1/8*1000))
+                    approx_start.push([i, data[i].time])
+
+                  } else if (data[i].time*1000 <= this.props.timestamps.stopTrial+(1/8*1000) && data[i].time*1000 >= this.props.timestamps.stopTrial-(1/8*1000)) {
+                    console.log(data[i].time*1000, this.props.timestamps.stopTrial+(1/8*1000))
+                    approx_end.push([i, data[i].time])
+                    
+                  }
+
+                }
+
+                console.log(approx_start)
+                console.log(approx_end)
+                
+                if (approx_end.length > 1) {
+                  let stamp_differences = []
+                  for (const indexTime in approx_end) {
+
+                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stopTrial))
+                    
+                  }
+                  
+                  this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
+
+                } else {this.stopIndex = approx_end[0][0]}
+
+                if (approx_start.length > 1) {
+                  let stamp_differences = []
+                  for (const indexTime in approx_start) {
+
+                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.startTrial))
+                    
+                  }
+                  
+                  this.startIndex = approx_start[indexOfSmallest(stamp_differences)][0]
+
+                } else {this.startIndex = approx_start[0][0]}
+
+                if (this.startIndex < this.stopIndex) {
+                  console.log(this.startIndex, this.stopIndex)
+                }
+
+              })
+
+              
 
               messageInput2.addEventListener('input', (e) => {
                 if (e.target.value !== '') {
@@ -256,12 +320,12 @@ class UI{
                 this._onMessageSend(message).then((m_color) => {
                     console.log('COLOR',m_color)
                     // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                    socket.emit('send-chat-message', {message: message, color: m_color})
+                    this.socket.emit('send-chat-message', {message: message, color: m_color})
                     messageInput2.value = ''
                 }).catch((error) => {
                     this._hideLoader()
                     // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                    socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                    this.socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
                     alert("Error detecting your emotion: "+error)
                     this._appendMessage(`You: ${message}`)
                     messageInput2.value = ''
@@ -274,20 +338,7 @@ class UI{
               messageForm1.addEventListener('submit', e => {
                 e.preventDefault()
                 const message = messageInput2.value
-                this._auth(message) // .then((m_color) => {
-                //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                //     socket.emit('send-chat-message', {message: message, color: m_color})
-                //     messageInput2.value = ''
-                // }).catch((error) => {
-                //     this._hideLoader()
-                //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                //     socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
-                //     alert("Error detecting your emotion: "+error)
-                //     this._appendMessage(`You: ${message}`)
-                //     messageInput2.value = ''
-                //     return
-          
-                //    })
+                this.socket.emit('auth', message)
          
               })
                 
@@ -406,26 +457,6 @@ class UI{
              fs
          }
  
-         // Send to server
-        //  fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
-        // .then(response => response.json())
-        // .then(emotion => {
- 
-        //      // Get Video Back
-        //      console.log(emotion)
-        //      this._hideLoader()
-        //      this._appendMessage(`You: ${message}`, this.colors[emotion])
-        //      return await this.colors[emotion]
-             
-        //      // Display Video
-             
-        //  }).catch((error) => {
-        //   this._hideLoader()
-        //   this._appendMessage(`You: ${message}`)
-        //   alert("Error detecting your emotion: "+error)
-        //   return
-
-        //  });
         let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
         
         if (!response.ok) {
@@ -440,35 +471,35 @@ class UI{
       })
     }
 
-    _auth = () => {
+    // _auth = () => {
       
-      return new Promise(async (resolve, reject) => {
+    //   return new Promise(async (resolve, reject) => {
 
-        let starttime = this.props.timestamps.startTrial
-        let stoptime = this.props.timestamps.stopTrial
-        let labels = this.characterSequence
+    //     let starttime = this.props.timestamps.startTrial
+    //     let stoptime = this.props.timestamps.stopTrial
+    //     let labels = this.characterSequence
         
-        let url = 'http://127.0.0.1:5001/auth'
-        let body = {
-            starttime,
-            stoptime,
-            labels
-        }
+    //     let url = 'http://127.0.0.1:5000/flask_app_2/auth'
+    //     let body = {
+    //         starttime,
+    //         stoptime,
+    //         labels
+    //     }
 
-        let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5001/", "Content-Type": "application/json"} })
+    //     let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
           
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
 
-        let pred = await response.json()
-        console.log(pred)
-        // this._hideLoader()
-        // this._appendMessage(`You: ${message}`, this.colors[pred])
-        resolve(pred)
+    //     let pred = await response.json()
+    //     console.log(pred)
+    //     // this._hideLoader()
+    //     // this._appendMessage(`You: ${message}`, this.colors[pred])
+    //     resolve(pred)
 
-      })
-    }
+    //   })
+    // }
 
     _sendLabels = () => {
       
@@ -499,6 +530,8 @@ class UI{
 
       })
     }
+
+    
 
     runParadigm = () => {
       
@@ -609,14 +642,16 @@ class UI{
           // console.log(this.characterSequence)
         } else {
           this.props.timestamps.stopTrial = Date.now()
-          this._sendLabels()
+          // this._sendLabels()
+          console.log("done")
+          this.socket.emit('P300done')
         }
       
         i++;
       
       }
 
-      let number_of_trials = 5;
+      let number_of_trials = 2;
       
       let all_chars = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
       let new_chars = shuffle(all_chars);
