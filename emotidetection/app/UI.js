@@ -100,7 +100,7 @@ class UI{
               <form class="send-container" id=" id="send-container1">
                 <input type="text" class="message-input" id="message-input1">
                 <button type="submit" class="send-button">Send</button>
-                <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
+
               </form>
           </div>
 
@@ -113,11 +113,6 @@ class UI{
             </div>
             
             
-            <form class="send-container" id="send-container2">
-              <input type="text" class="message-input" id="message-input2">
-              <button type="submit" class="send-button">Send</button>
-              <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
-            </form>
 
 
             
@@ -213,6 +208,8 @@ class UI{
               const messageForm = document.getElementById('send-container2')
               const messageInput = document.getElementById('message-input2')
               this.loader = document.getElementsByClassName('lds-roller')[0]
+              const messageForm2 = document.getElementById('send-container1')
+              const messageInput2 = document.getElementById('message-input2')
               console.log(this.loader)
               
               const name = prompt('What is your name?') // not necessary 
@@ -282,6 +279,55 @@ class UI{
                  })
          
               })
+
+              /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+              messageInput2.addEventListener('input', (e) => {
+                if (e.target.value !== '') {
+                  if (e.target.value.length == 1) { // potential error
+                    if (Date.now() - this.props.timestamps.startEEG > 5*1000) {
+                      this.props.timestamps.start = Date.now() - 5*1000
+                    }
+                    else {
+                      this.props.timestamps.start = Date.now()
+                    }
+                  }
+                }
+                else {
+                  this.props.timestamps.start = null
+                }
+              })
+              
+                
+            
+              messageForm2.addEventListener('submit', e => {
+              e.preventDefault()
+              const message = messageInput2.value
+              this._onMessageSend(message).then((m_color) => {
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                  socket.emit('send-chat-message', {message: message, color: m_color})
+                  messageInput2.value = ''
+              }).catch((error) => {
+                  this._hideLoader()
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                  socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                  alert("Error detecting your emotion: "+error)
+                  this._appendMessage(`You: ${message}`)
+                  messageInput2.value = ''
+                  return
+        
+                 })
+         
+              })
+
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             
             }, 1000)
 
