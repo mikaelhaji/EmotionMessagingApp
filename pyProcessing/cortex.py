@@ -338,6 +338,7 @@ class Cortex(Dispatcher):
                 pow_data = {}
                 pow_data['pow'] = result_dic['pow']
                 pow_data['time'] = result_dic['time']
+                # print(pow_data)
                 self.emit('new_pow_data', data=pow_data)
             else :
                 print(new_data)

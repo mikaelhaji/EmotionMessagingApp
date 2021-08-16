@@ -7,10 +7,13 @@ import pickle
 from preprocessing import *
 from tqdm import tqdm 
 from emotivate import *
+from flask_socketio import SocketIO
+from cortex import Cortex
         
 # create the Flask app
 app = Flask(__name__) # static_url_path=('/Users/anush/AppData/Local/Temp')
 CORS(app)
+socketio = SocketIO(app)
 
 @app.route('/emotions', methods=['POST', 'GET'])
 def pred_serve():
@@ -59,20 +62,34 @@ def pred_serve():
 
     return 'Classifying emotions'
 
-@app.route('/auth', methods=['POST', 'GET'])
+@app.route('/auth', methods=['POST', 'GET']) # add into another python file with different interpetor, send data to this flask server
 def auth():
     if request.method == 'POST':
 
         request_data = request.get_json()
 
-        # Create UI for auth stuff
+        user = {
+                # "license" : "your emotivpro license, which could use for third party app",
+                "client_id": "vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC",
+                "client_secret": "hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ",
+                "debit" : 100
+            }
+
+        cxinstance = Cortex(user)
+
+        # Do prepare steps
+        cxinstance.do_prepare_steps()
+        cxinstance.sub_request(['pow'])
 
         preds = [1,2,3,4,5]
-
         
         return json.dumps(preds) # list(preds)
 
     return 'Classifying emotions'
+
+@socketio.on('new_pow_data')
+def handle_json(json):
+    print('received json: ' + str(json))
 
 @app.route('/p300', methods=['POST', 'GET'])
 def p300():
@@ -98,4 +115,5 @@ def p300():
 if __name__ == '__main__':
     # run app in debug mode on port 5000
     from model import gen_predict
-    app.run(debug=True, port=5000)
+    # app.run(debug=True, port=5000)
+    socketio.run(app, port=5000)

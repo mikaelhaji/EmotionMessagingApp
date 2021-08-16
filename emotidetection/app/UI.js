@@ -96,25 +96,21 @@ class UI{
 
         </head>
         <body>
-          <div style = "z-index: 2, position: relative", class: "pages" > 
-              <form class="send-container" id=" id="send-container1">
+          <div style = "z-index: 2; position: absolute;" class: "pages" > 
+              <form class="send-container" id="send-container1" style="position: absolute; top: 100px;">
                 <input type="text" class="message-input" id="message-input1">
                 <button type="submit" class="send-button">Send</button>
 
               </form>
           </div>
 
-          <div style = "z-index: 1, opacity: 100, position: relative", class: "pages" >
-
+          <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" >
 
             <div id="main-div">
               <div id="message-container"></div>
               <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             </div>
             
-            
-
-
             
 
             <div id="speller_matrix">
@@ -205,8 +201,11 @@ class UI{
               console.log(socket)
               this.messageContainer = document.getElementById('message-container')
               this.props.startP300 = document.getElementById('start')
-              const messageForm = document.getElementById('send-container2')
-              const messageInput = document.getElementById('message-input2')
+              const messageForm2 = document.getElementById('send-container2')
+              const messageInput2 = document.getElementById('message-input2')
+              const messageForm1 = document.getElementById('send-container1')
+              console.log(messageForm1)
+              const messageInput1 = document.getElementById('message-input1')
               this.loader = document.getElementsByClassName('lds-roller')[0]
               const messageForm2 = document.getElementById('send-container1')
               const messageInput2 = document.getElementById('message-input2')
@@ -229,7 +228,7 @@ class UI{
               this._appendMessage(`${name} disconnected`)
               })
 
-              messageInput.addEventListener('input', (e) => {
+              messageInput2.addEventListener('input', (e) => {
                 if (e.target.value !== '') {
                   if (e.target.value.length == 1) { // potential error
                     if (Date.now() - this.props.timestamps.startEEG > 5*1000) {
@@ -247,7 +246,48 @@ class UI{
                   this.props.timestamps.start = null
                 }
               })
-              
+
+              messageForm2.addEventListener('submit', e => {
+                e.preventDefault()
+                const message = messageInput2.value
+                this._onMessageSend(message).then((m_color) => {
+                    console.log('COLOR',m_color)
+                    // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                    socket.emit('send-chat-message', {message: message, color: m_color})
+                    messageInput2.value = ''
+                }).catch((error) => {
+                    this._hideLoader()
+                    // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                    socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                    alert("Error detecting your emotion: "+error)
+                    this._appendMessage(`You: ${message}`)
+                    messageInput2.value = ''
+                    return
+          
+                   })
+           
+                })          
+            
+              messageForm1.addEventListener('submit', e => {
+                e.preventDefault()
+                const message = messageInput2.value
+                this._auth(message) // .then((m_color) => {
+                //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                //     socket.emit('send-chat-message', {message: message, color: m_color})
+                //     messageInput2.value = ''
+                // }).catch((error) => {
+                //     this._hideLoader()
+                //     // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                //     socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                //     alert("Error detecting your emotion: "+error)
+                //     this._appendMessage(`You: ${message}`)
+                //     messageInput2.value = ''
+                //     return
+          
+                //    })
+         
+              })
+                
               this.props.startP300.onclick  = (e) => {
 
                 console.log("clicked")
@@ -255,79 +295,6 @@ class UI{
                 this.runParadigm()
                 
               }
-                
-              
-
-
-              messageForm.addEventListener('submit', e => {
-              e.preventDefault()
-              const message = messageInput.value
-              this._onMessageSend(message).then((m_color) => {
-                  console.log('COLOR',m_color)
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                  socket.emit('send-chat-message', {message: message, color: m_color})
-                  messageInput.value = ''
-              }).catch((error) => {
-                  this._hideLoader()
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                  socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
-                  alert("Error detecting your emotion: "+error)
-                  this._appendMessage(`You: ${message}`)
-                  messageInput.value = ''
-                  return
-        
-                 })
-         
-              })
-
-              /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-              messageInput2.addEventListener('input', (e) => {
-                if (e.target.value !== '') {
-                  if (e.target.value.length == 1) { // potential error
-                    if (Date.now() - this.props.timestamps.startEEG > 5*1000) {
-                      this.props.timestamps.start = Date.now() - 5*1000
-                    }
-                    else {
-                      this.props.timestamps.start = Date.now()
-                    }
-                  }
-                }
-                else {
-                  this.props.timestamps.start = null
-                }
-              })
-              
-                
-            
-              messageForm2.addEventListener('submit', e => {
-              e.preventDefault()
-              const message = messageInput2.value
-              this._onMessageSend(message).then((m_color) => {
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                  socket.emit('send-chat-message', {message: message, color: m_color})
-                  messageInput2.value = ''
-              }).catch((error) => {
-                  this._hideLoader()
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                  socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
-                  alert("Error detecting your emotion: "+error)
-                  this._appendMessage(`You: ${message}`)
-                  messageInput2.value = ''
-                  return
-        
-                 })
-         
-              })
-
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             
             }, 1000)
 
@@ -467,6 +434,36 @@ class UI{
         this._hideLoader()
         this._appendMessage(`You: ${message}`, this.colors[pred])
         resolve(this.colors[pred])
+      })
+    }
+
+    _auth = () => {
+      
+      return new Promise(async (resolve, reject) => {
+
+        let starttime = this.props.timestamps.startTrial
+        let stoptime = this.props.timestamps.stopTrial
+        let labels = this.characterSequence
+        
+        let url = 'http://127.0.0.1:5001/auth'
+        let body = {
+            starttime,
+            stoptime,
+            labels
+        }
+
+        let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5001/", "Content-Type": "application/json"} })
+          
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        let pred = await response.json()
+        console.log(pred)
+        // this._hideLoader()
+        // this._appendMessage(`You: ${message}`, this.colors[pred])
+        resolve(pred)
+
       })
     }
 
@@ -652,7 +649,7 @@ class UI{
 }
 export {UI}
 
-console.log("helo")
+// console.log("helo")
 
 
 // anush is smelly
