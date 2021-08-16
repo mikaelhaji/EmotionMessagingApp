@@ -114,11 +114,12 @@ class Subcribe():
     on_new_pow_data(*args, **kwargs):
         To handle band power data emitted from Cortex
     """
-    def __init__(self):
+    def __init__(self, user, dbuffer):
         """
         Constructs cortex client and bind a function to handle subscribed data streams
         If you do not want to log request and response message , set debug_mode = False. The default is True
         """
+        self.dbuffer = dbuffer
         self.c = Cortex(user, debug_mode=True)
         self.c.bind(new_data_labels=self.on_new_data_labels)
         self.c.bind(new_eeg_data=self.on_new_eeg_data)
@@ -238,9 +239,11 @@ class Subcribe():
              The values in the array pow match the labels in the array labels return at on_new_data_labels
         For example: {'pow': [5.251, 4.691, 3.195, 1.193, 0.282, 0.636, 0.929, 0.833, 0.347, 0.337, 7.863, 3.122, 2.243, 0.787, 0.496, 5.723, 2.87, 3.099, 0.91, 0.516, 5.783, 4.818, 2.393, 1.278, 0.213], 'time': 1627459390.1729}
         """
+        # print(kwargs)
         data = kwargs.get('data')
-        print('pow data: {}'.format(data))
-        print(len(data['pow'])) # 14*5 bands -> theta, alpha, low beta, high beta, gamma
+        # print('pow data: {}'.format(data))
+        # print(len(self.dbuffer)) # 14*5 bands -> theta, alpha, low beta, high beta, gamma
+        self.dbuffer.append(data)
 
 
 # -----------------------------------------------------------
@@ -271,7 +274,7 @@ class Subcribe():
 #     "debit" : 100
 # }
 
-
+# data_buffer = []
 
 # s = Subcribe()
 
@@ -285,7 +288,6 @@ class Subcribe():
 # streams = ['pow']
 
 # s.sub(streams)
-
 
 
 
