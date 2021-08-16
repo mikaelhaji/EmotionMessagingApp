@@ -87,8 +87,8 @@ class UI{
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <title>P300-based BCI Stimulus Presentation Paradigm</title>
  
-          <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
-          <link rel="stylesheet" href="css/jquery/jquery-ui.css">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+          <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 
 
         </head>
@@ -185,8 +185,8 @@ class UI{
               <button class="btn-primary btn-lg" id="start">START</button>
             
             </div>
-            <script src="js/jsmin//jquery.min.js"></script>
-            <script src="js/jsui/jquery-ui.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
             
             <script src="functions.js"></script>
               
