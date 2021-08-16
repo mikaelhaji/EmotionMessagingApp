@@ -18,12 +18,15 @@ class UI{
             timestamps: {
                 startEEG: Date.now(),
                 start: null,
-                stop: null
+                stop: null,
+                startTrial: null,
+                stopTrial: null
             },
         }
 
         this.colors = ['red', 'blue', 'green', 'yellow'],
         this.messageCount = 0,
+        this.characterSequence = [], 
 
         this.io = null
 
@@ -161,19 +164,19 @@ class UI{
               <tr>
                 <td id="Y">Y</td>
                 <td id="Z">Z</td> 
-                <td id="0">0</td>
-                <td id="1">1</td>
-                <td id="2">2</td> 
-                <td id="3">3</td>
+                <td id="0">.</td>
+                <td id="1">,</td>
+                <td id="2">:</td> 
+                <td id="3">;</td>
               </tr>
               
               <tr>
-                <td id="4">4</td>
-                <td id="5">5</td> 
-                <td id="6">6</td>
-                <td id="7">7</td>
-                <td id="8">8</td> 
-                <td id="9">9</td>
+                <td id="4">@</td>
+                <td id="5">?</td> 
+                <td id="6">-</td>
+                <td id="7"><<</td>
+                <td id="8">spc</td> 
+                <td id="9">end</td>
               </tr>
             
             </table>
@@ -421,8 +424,38 @@ class UI{
       })
     }
 
-    runParadigm = () => {
+    _sendLabels = () => {
+      
+      return new Promise(async (resolve, reject) => {
 
+        let starttime = this.props.timestamps.startTrial
+        let stoptime = this.props.timestamps.stopTrial
+        let labels = this.characterSequence
+        
+        let url = 'http://127.0.0.1:5000/p300'
+        let body = {
+            starttime,
+            stoptime,
+            labels
+        }
+
+        let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+          
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        let pred = await response.json()
+        console.log(pred)
+        // this._hideLoader()
+        // this._appendMessage(`You: ${message}`, this.colors[pred])
+        resolve(pred)
+
+      })
+    }
+
+    runParadigm = () => {
+      
       let light_unlit = (char_index,state) => {
         
         let stim_colour = null;
@@ -460,16 +493,16 @@ class UI{
         case 24: document.getElementById('X').style.color =  stim_colour; break;
         case 25: document.getElementById('Y').style.color =  stim_colour; break;
         case 26: document.getElementById('Z').style.color =  stim_colour; break;
-        case 27: document.getElementById('.').style.color =  stim_colour; break;
-        case 28: document.getElementById(',').style.color =  stim_colour; break;
-        case 29: document.getElementById(':').style.color =  stim_colour; break;
-        case 30: document.getElementById(';').style.color =  stim_colour; break;
-        case 31: document.getElementById('@').style.color =  stim_colour; break;
-        case 32: document.getElementById('?').style.color =  stim_colour; break;
-        case 33: document.getElementById('-').style.color =  stim_colour; break;
-        case 34: document.getElementById('<<').style.color =  stim_colour; break;
-        case 35: document.getElementById('spc').style.color =  stim_colour; break;
-        case 36: document.getElementById('end').style.color =  stim_colour; break;
+        case 27: document.getElementById('0').style.color =  stim_colour; break;
+        case 28: document.getElementById('1').style.color =  stim_colour; break;
+        case 29: document.getElementById('2').style.color =  stim_colour; break;
+        case 30: document.getElementById('3').style.color =  stim_colour; break;
+        case 31: document.getElementById('4').style.color =  stim_colour; break;
+        case 32: document.getElementById('5').style.color =  stim_colour; break;
+        case 33: document.getElementById('6').style.color =  stim_colour; break;
+        case 34: document.getElementById('7').style.color =  stim_colour; break;
+        case 35: document.getElementById('8').style.color =  stim_colour; break;
+        case 36: document.getElementById('9').style.color =  stim_colour; break;
         default: 
         }
       
@@ -501,10 +534,15 @@ class UI{
         let s = d.getSeconds();
         let n = d.getMilliseconds();
         console.log(m*60*1000+1000*s+n); // output second+ms to console log
+
+        if(i===0) {
+          this.props.timestamps.startTrial = Date.now()
+        }
                       
         if(i<c) {
           
           let flash_index = new_chars[i];
+          this.characterSequence.push(flash_index)
           
           light_unlit(flash_index,1); // highlight element
           
@@ -522,6 +560,10 @@ class UI{
             }
           ,flash_time);
           
+          // console.log(this.characterSequence)
+        } else {
+          this.props.timestamps.stopTrial = Date.now()
+          this._sendLabels()
         }
       
         i++;
@@ -538,7 +580,8 @@ class UI{
         let temp_chars = shuffle(all_chars);
         new_chars = new_chars.concat(temp_chars);
       }
-            
+      
+      // console.log(new_chars) -> this is the sequence of letters. no need to append
       let c=new_chars.length;
       let i=0;
       
@@ -552,8 +595,6 @@ class UI{
       
       let flash_time = 100;
       let ISI = 100;
-    
-      // recursive function to keep calling setTimeout until all characters have flashed
           
     }
 
