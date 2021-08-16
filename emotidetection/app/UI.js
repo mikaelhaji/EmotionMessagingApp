@@ -460,16 +460,16 @@ class UI{
         case 24: document.getElementById('X').style.color =  stim_colour; break;
         case 25: document.getElementById('Y').style.color =  stim_colour; break;
         case 26: document.getElementById('Z').style.color =  stim_colour; break;
-        case 27: document.getElementById('0').style.color =  stim_colour; break;
-        case 28: document.getElementById('1').style.color =  stim_colour; break;
-        case 29: document.getElementById('2').style.color =  stim_colour; break;
-        case 30: document.getElementById('3').style.color =  stim_colour; break;
-        case 31: document.getElementById('4').style.color =  stim_colour; break;
-        case 32: document.getElementById('5').style.color =  stim_colour; break;
-        case 33: document.getElementById('6').style.color =  stim_colour; break;
-        case 34: document.getElementById('7').style.color =  stim_colour; break;
-        case 35: document.getElementById('8').style.color =  stim_colour; break;
-        case 36: document.getElementById('9').style.color =  stim_colour; break;
+        case 27: document.getElementById('.').style.color =  stim_colour; break;
+        case 28: document.getElementById(',').style.color =  stim_colour; break;
+        case 29: document.getElementById(':').style.color =  stim_colour; break;
+        case 30: document.getElementById(';').style.color =  stim_colour; break;
+        case 31: document.getElementById('@').style.color =  stim_colour; break;
+        case 32: document.getElementById('?').style.color =  stim_colour; break;
+        case 33: document.getElementById('-').style.color =  stim_colour; break;
+        case 34: document.getElementById('<<').style.color =  stim_colour; break;
+        case 35: document.getElementById('spc').style.color =  stim_colour; break;
+        case 36: document.getElementById('end').style.color =  stim_colour; break;
         default: 
         }
       
