@@ -86,8 +86,7 @@ class UI{
           <meta http-equiv="X-UA-Compatible" content="IE=edge">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <title>P300-based BCI Stimulus Presentation Paradigm</title>
-          
-          <link href="custom.css" rel="stylesheet">
+ 
           <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
           <link rel="stylesheet" href="css/jquery/jquery-ui.css">
 
@@ -95,10 +94,10 @@ class UI{
         </head>
         <body>
           <div style = "z-index: 2, position: relative", class: "pages" > 
-          <form id="send-container">
-              <input type="text" id="message-input">
-              <button type="submit" id="send-button">Send</button>
-              <button style='position: relative;' type="button", id="devicebutton" class="brainsatplay-default-button">Connect BCI</button>
+          <form class="send-container">
+              <input type="text" class="message-input">
+              <button type="submit" class="send-button">Send</button>
+              <button style='position: relative;' type="button", class="brainsatplay-default-button devicebutton">Connect BCI</button>
             </form>
           </div>
 

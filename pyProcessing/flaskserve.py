@@ -13,7 +13,7 @@ app = Flask(__name__) # static_url_path=('/Users/anush/AppData/Local/Temp')
 CORS(app)
 
 @app.route('/emotions', methods=['POST', 'GET'])
-def form_example():
+def pred_serve():
     if request.method == 'POST':
 
         request_data = request.get_json()
@@ -60,7 +60,7 @@ def form_example():
     return 'Classifying emotions'
 
 @app.route('/auth', methods=['POST', 'GET'])
-def form_example():
+def auth():
     if request.method == 'POST':
 
         request_data = request.get_json()

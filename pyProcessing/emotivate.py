@@ -264,27 +264,27 @@ class Subcribe():
     To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
     To subscribe eeg you need to put a valid licese (PRO license)
 """
-user = {
-    # "license" : "your emotivpro license, which could use for third party app",
-    "client_id": "vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC",
-    "client_secret": "hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ",
-    "debit" : 100
-}
+# user = {
+#     # "license" : "your emotivpro license, which could use for third party app",
+#     "client_id": "vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC",
+#     "client_secret": "hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ",
+#     "debit" : 100
+# }
 
 
 
-s = Subcribe()
+# s = Subcribe()
 
-# Do prepare steps
-s.do_prepare_steps()
+# # Do prepare steps
+# s.do_prepare_steps()
 
-# sub multiple streams
-# streams = ['eeg','mot','met','pow']
+# # sub multiple streams
+# # streams = ['eeg','mot','met','pow']
 
-# or only sub for eeg
-streams = ['pow']
+# # or only sub for eeg
+# streams = ['pow']
 
-s.sub(streams)
+# s.sub(streams)
 
 
 
