@@ -213,9 +213,9 @@ class UI{
                       <td id="9">XX</td>
                     </tr>
           
-                  <button class="btn-primary btn-lg" id="start">START</button>
+                  <button class="btn-primary btn-lg" id="start">Start P300 Experiment</button>
             
-                </div>  
+                </div> 
                 
                 </table>
 

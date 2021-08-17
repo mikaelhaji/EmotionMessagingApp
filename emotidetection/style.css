@@ -168,9 +168,9 @@ flex-grow: 1;
   
   #start {
     text-align: center;
-    position: fixed;
-    top:95%;
-    left:50%;
+    position: absolute;
+    top: 710px;
+    left:50;
     transform: translate(-50%,-50%); /* xy translate according to element dimensions */
   }
   
@@ -182,9 +182,9 @@ flex-grow: 1;
   }
   
   td {
-    width:120px;
-    height:120px;
-    font-size:6em;
+    width:75px;
+    height:75px;
+    font-size:5.5em;
     text-align: center;
     font-family: Arial;
   }
