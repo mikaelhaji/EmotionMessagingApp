@@ -406,6 +406,14 @@ io.on('connection', socket => {
 
   })
 
+  socket.on('doneText', () => {
+    
+    let data = c[socket.id].data
+    // console.log(data)
+    socket.emit("emotionData", data)
+
+  })
+
 
 })
 
