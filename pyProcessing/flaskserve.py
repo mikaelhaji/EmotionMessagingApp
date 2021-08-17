@@ -10,6 +10,7 @@ from emotivate import *
 from flask_socketio import SocketIO
 from cortex import Cortex
 from model import * # quick fix, check later
+from statistics import mode
         
 # create the Flask app
 app = Flask(__name__) # static_url_path=('/Users/anush/AppData/Local/Temp')
@@ -46,7 +47,7 @@ def pred_serve():
         outputArr = pd.DataFrame(np.array([[list(flatten(coeff)) for coeff in batch] for batch in tqdm(relevant_trim)]).reshape(len(relevant_trim), elec_count*-1))
         print(outputArr.shape)
 
-        preds = gen_predict(outputArr, elec_count)
+        preds = model.gen_predict(outputArr, elec_count)
 
         # Note: when the request objects are saved, page refreshes
         # Note: file.read() returns bin, file.stream returns a spooledtempfile
@@ -68,8 +69,18 @@ def pred_servehack():
     if request.method == 'POST':
 
         request_data = request.get_json()
-    
-        preds = [1,0,1,0]
+
+        # print(request_data)
+
+        data = [row["pow"] for row in request_data["finalData"]]
+        batches = []
+        for x in range(int(len(data)/40)):
+            batches.append(np.mean(data[x*40:x*40+40], axis=0))
+
+        preds = model.emotiv_pred(pd.DataFrame(batches))
+
+        if type(preds) == list:
+            preds = mode(preds)
 
         return json.dumps(preds) # list(preds)
 
@@ -82,22 +93,51 @@ def p300():
 
         request_data = request.get_json()
 
-        with open(f"sample_p300.pkl", "wb") as outfile:
-            pickle.dump(request_data, outfile)
-
-        print(request_data)
-
-        # Create UI for auth stuff
-
-        preds = [1,2,3,4,5]
+        labels = request_data["labels"]
+        data = request_data["data"]
 
         
-        return json.dumps(preds) # list(preds)
+        pow_data = []
+        data_timestamps = []
+        for row in data:
+            pow_data.append(row["pow"])
+            data_timestamps.append(row["time"]*1000)
+
+        char_dataPairs = []
+        for label in labels:
+            psdMatch = []
+            p300_offset = label[1]+200
+            # print(p300_offset)
+            for ind, timestamp in enumerate(data_timestamps):
+                # print(timestamp)
+                if timestamp >= p300_offset and timestamp <= p300_offset+300:
+                    psdMatch.append(pow_data[ind])
+
+            # print(len(psdMatch))
+            if len(psdMatch) > 1:
+                char_dataPairs.append([label[0], np.mean(psdMatch, axis=0)])
+            elif len(psdMatch) == 0:
+                break
+            else:
+                char_dataPairs.append([label[0], psdMatch[0]])
+            
+        
+        inp_arr = pd.DataFrame([x[1] for x in char_dataPairs])
+        print(inp_arr)
+        preds = model.P300_pred(inp_arr)
+        
+        pred_char = pd.DataFrame([list(l) for l in zip([x[0] for x in char_dataPairs], preds)])
+        pos_preds = pred_char.loc[pred_char[1] == 1]
+
+        char = mode(pos_preds[0])
+
+        
+        return json.dumps(char) # list(preds)
 
     return 'p300'
 
 if __name__ == '__main__':
     # run app in debug mode on port 5000
-    from model import gen_predict
+    import model 
     app.run(debug=True, port=5000)
 #     socketio.run(app, port=5000)

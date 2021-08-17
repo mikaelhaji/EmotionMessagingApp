@@ -271,7 +271,9 @@ class UI{
               this.socket.emit('new-user', name)
 
               this.socket.on('chat-message', data => {
-              this._appendMessage(`${data.name}: ${data.message}`, data.color)
+            
+                  this._appendMessage(`${data.name}: ${data.message}`, data.color)
+              
               })
 
               this.socket.on('user-connected', name => {
@@ -291,6 +293,7 @@ class UI{
                 // console.log("done")
                 // console.log(data) // array of x size, 70 features per row, .pow = features, .time = The timestamp of this sample. 
                 //                   //It is the number of seconds that have elapsed since 00:00:00 Thursday, 1 January 1970 UTC.
+                console.log(data)
                 let indexOfSmallest = (a) => {
                   var lowest = 0;
                   for (var i = 1; i < a.length; i++) {
@@ -343,10 +346,84 @@ class UI{
                 } else {this.startIndex = approx_start[0][0]}
 
                 if (this.startIndex < this.stopIndex) {
-                  console.log(this.startIndex, this.stopIndex)
+                  console.log(this.startIndex, this.stopIndex) 
+                }
+
+                this.P300data = data.slice(this.startIndex, this.stopIndex)
+                this._sendP300().then((char) => {
+                  console.log(char)
+                })
+
+              })
+
+              this.socket.on('emotionData', data => {
+                // console.log("done")
+                // console.log(data) // array of x size, 70 features per row, .pow = features, .time = The timestamp of this sample. 
+                //                   //It is the number of seconds that have elapsed since 00:00:00 Thursday, 1 January 1970 UTC.
+                let indexOfSmallest = (a) => {
+                  var lowest = 0;
+                  for (var i = 1; i < a.length; i++) {
+                    if (a[i] < a[lowest]) lowest = i;
+                  }
+                  return lowest;
+                  }
+                
+                let approx_start = []
+                let approx_end = []
+                console.log(data.length)
+                for (let i = 0; i < data.length; i++) {
+                  if (data[i].time*1000 <= this.props.timestamps.start+(1/8*1000) && data[i].time*1000 >= this.props.timestamps.start-(1/8*1000)) {
+                    console.log(data[i].time*1000, this.props.timestamps.start+(1/8*1000))
+                    approx_start.push([i, data[i].time])
+
+                  } else if (data[i].time*1000 <= this.props.timestamps.stop+(1/8*1000) && data[i].time*1000 >= this.props.timestamps.stop-(1/8*1000)) {
+                    console.log(data[i].time*1000, this.props.timestamps.stop+(1/8*1000))
+                    approx_end.push([i, data[i].time])
+                    
+                  }
+
+                }
+
+                console.log(approx_start)
+                console.log(approx_end)
+                
+                if (approx_end.length > 1) {
+                  let stamp_differences = []
+                  for (const indexTime in approx_end) {
+
+                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stop))
+                    
+                  }
+                  
+                  this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
+
+                } else {this.stopIndex = approx_end[0][0]}
+
+                if (approx_start.length > 1) {
+                  let stamp_differences = []
+                  for (const indexTime in approx_start) {
 
                   
                 }
+
+                this.emotionData = data.slice(this.startIndexEmo, this.stopIndexEmo)
+                
+                this._onMessageSendHack().then((m_color) => {
+                  console.log('COLOR',m_color)
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                  this.socket.emit('send-chat-message', {message: this.message, color: m_color})
+                  this._appendMessage(`You: ${this.message}`, m_color)
+                  messageInput.value = ''
+              }).catch((error) => {
+                  this._hideLoader()
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                  this.socket.emit('send-chat-message', {message: this.message} ) // this._appendMessage(`You: ${message}`)
+                  alert("Error detecting your emotion: "+error)
+                  this._appendMessage(`You: ${this.message}`)
+                  messageInput.value = ''
+                  return
+        
+                  })
 
               })
 
@@ -373,22 +450,10 @@ class UI{
 
             messageForm.addEventListener('submit', e => {
               e.preventDefault()
-              const message = messageInput2.value
-              this._onMessageSend(message).then((m_color) => {
-                  console.log('COLOR',m_color)
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                  this.socket.emit('send-chat-message', {message: message, color: m_color})
-                  messageInput2.value = ''
-              }).catch((error) => {
-                  this._hideLoader()
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                  this.socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
-                  alert("Error detecting your emotion: "+error)
-                  this._appendMessage(`You: ${message}`)
-                  messageInput2.value = ''
-                  return
-        
-                  })
+              this.props.timestamps.stop = Date.now()
+              this.message = messageInput.value
+              console.log(messageInput.value)
+              this.socket.emit('doneText')
           
               })          
             
@@ -669,10 +734,9 @@ _userRemoved = (userData) => {
 
       let pred = await response.json()
       console.log(pred)
-      // this._hideLoader()
+      this._hideLoader()
       // this._appendMessage(`You: ${message}`, this.colors[pred])
-      resolve(pred)
-
+      resolve(this.colors[pred])
     })
   }
 
@@ -698,7 +762,7 @@ _userRemoved = (userData) => {
       }
 
       let pred = await response.json()
-      console.log(pred)
+      // console.log(pred)
       // this._hideLoader()
       // this._appendMessage(`You: ${message}`, this.colors[pred])
       resolve(pred)

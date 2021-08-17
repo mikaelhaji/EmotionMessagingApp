@@ -386,8 +386,8 @@ io.on('connection', socket => {
     let socketUrl = 'wss://localhost:6868'
     let userAuth = {
       // "license":"your license",
-      "clientId": "vziC1xUKCuO6137BOCJbB3A1fxR3qPUCOOPo3VJV", //vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC - Anush
-      "clientSecret": "1XMQFDS76VQN8Om6M8jweYZgPrNahNsgpU1fSW9zCO5Eqzv0IAR7AIHLw0X85EfMKSgwzCFp3hWsXYw0CoV5IhPBEI7viupQYMpl6bpn6Q2dmCtxWM4ROjEvi0n4PlS6", //hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ - Anush
+      "clientId": "vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC", //vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC - Anush
+      "clientSecret": "hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ", //hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ - Anush
       "debit" : 100
     }
     
