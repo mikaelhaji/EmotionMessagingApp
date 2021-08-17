@@ -373,7 +373,7 @@ io.on('connection', socket => {
     users[socket.id] = name
     socket.broadcast.emit('user-connected', name)
   })
-  socket.on('send-chat-message', (data) => {
+  socket.on('send-chat-message', (data) => { // I like to eat eat 
     console.log(data)
     socket.broadcast.emit('chat-message', { message: data.message, name: users[socket.id], color: data.color})
   })
@@ -386,8 +386,8 @@ io.on('connection', socket => {
     let socketUrl = 'wss://localhost:6868'
     let userAuth = {
       // "license":"your license",
-      "clientId": "vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC",
-      "clientSecret": "hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ",
+      "clientId": "vziC1xUKCuO6137BOCJbB3A1fxR3qPUCOOPo3VJV", //vZBMOf14yce3Vxe5UXzzXpZexee86PDC1Iq5nSrC - Anush
+      "clientSecret": "1XMQFDS76VQN8Om6M8jweYZgPrNahNsgpU1fSW9zCO5Eqzv0IAR7AIHLw0X85EfMKSgwzCFp3hWsXYw0CoV5IhPBEI7viupQYMpl6bpn6Q2dmCtxWM4ROjEvi0n4PlS6", //hLyAJyTACwukQTMlpU97NKWxwoK4jkfguFa9TBJbv9ybsaWV3NLpXaZKtlwpgxVACK6QYp5XrYDOPtPDxWeBcsWCTzltK329kHsWGhBS6WcSGJkUVlnHVKFyMmdTiANZ - Anush
       "debit" : 100
     }
     

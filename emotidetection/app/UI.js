@@ -157,70 +157,73 @@ class UI{
           <div id="speller_matrix">
             <div id="mydiv">
               <div id = "mydivheader"> Move Here</div>
-                <table>
-                  <tr>
-                    <td id="A">A</td>
-                    <td id="B">B</td> 
-                    <td id="C">C</td>
-                    <td id="D">D</td>
-                    <td id="E">E</td> 
-                    <td id="F">F</td>
-                  </tr>
-                
-                  <tr>
-                    <td id="G">G</td>
-                    <td id="H">H</td> 
-                    <td id="I">I</td>
-                    <td id="J">J</td>
-                    <td id="K">K</td> 
-                    <td id="L">L</td>
-                  </tr>
-                
-                  <tr>
-                    <td id="M">M</td>
-                    <td id="N">N</td> 
-                    <td id="O">O</td>
-                    <td id="P">P</td>
-                    <td id="Q">Q</td> 
-                    <td id="R">R</td>
-                  </tr>
+                <div>
+                  <table>
+                    <tr>
+                      <td id="A">A</td>
+                      <td id="B">B</td> 
+                      <td id="C">C</td>
+                      <td id="D">D</td>
+                      <td id="E">E</td> 
+                      <td id="F">F</td>
+                    </tr>
                   
-                  <tr>
-                    <td id="S">S</td>
-                    <td id="T">T</td> 
-                    <td id="U">U</td>
-                    <td id="V">V</td>
-                    <td id="W">W</td> 
-                    <td id="X">X</td>
-                  </tr>
+                    <tr>
+                      <td id="G">G</td>
+                      <td id="H">H</td> 
+                      <td id="I">I</td>
+                      <td id="J">J</td>
+                      <td id="K">K</td> 
+                      <td id="L">L</td>
+                    </tr>
                   
-                  <tr>
-                    <td id="Y">Y</td>
-                    <td id="Z">Z</td> 
-                    <td id="0">.</td>
-                    <td id="1">,</td>
-                    <td id="2">:</td> 
-                    <td id="3">;</td>
-                  </tr>
-                  
-                  <tr>
-                    <td id="4">@</td>
-                    <td id="5">?</td> 
-                    <td id="6">-</td>
-                    <td id="7">bk</td>
-                    <td id="8">[]</td> 
-                    <td id="9">XX</td>
-                  </tr>
+                    <tr>
+                      <td id="M">M</td>
+                      <td id="N">N</td> 
+                      <td id="O">O</td>
+                      <td id="P">P</td>
+                      <td id="Q">Q</td> 
+                      <td id="R">R</td>
+                    </tr>
+                    
+                    <tr>
+                      <td id="S">S</td>
+                      <td id="T">T</td> 
+                      <td id="U">U</td>
+                      <td id="V">V</td>
+                      <td id="W">W</td> 
+                      <td id="X">X</td>
+                    </tr>
+                    
+                    <tr>
+                      <td id="Y">Y</td>
+                      <td id="Z">Z</td> 
+                      <td id="0">.</td>
+                      <td id="1">,</td>
+                      <td id="2">:</td> 
+                      <td id="3">;</td>
+                    </tr>
+                    
+                    <tr>
+                      <td id="4">@</td>
+                      <td id="5">?</td> 
+                      <td id="6">-</td>
+                      <td id="7">bk</td>
+                      <td id="8">[]</td> 
+                      <td id="9">XX</td>
+                    </tr>
+          
+                  <button class="btn-primary btn-lg" id="start">Start P300 Experiment</button>
+            
+                </div> 
                 
                 </table>
+
+                
             </div>
           </div>
           
-          <div>
           
-            <button class="btn-primary btn-lg" id="start">START</button>
-          
-          </div>
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
           <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
           
