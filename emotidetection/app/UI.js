@@ -801,8 +801,8 @@ _userRemoved = (userData) => {
     })
   }
 
-  _onMessageSendHack = (message) => {
-
+  _auth = () => {
+    
     return new Promise(async (resolve, reject) => {
 
        this._showLoader()
@@ -847,11 +847,19 @@ _userRemoved = (userData) => {
       //  });
       let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
       
+      let url = 'http://127.0.0.1:5001/auth'
+      let body = {
+          starttime,
+          stoptime,
+          labels
+      }
+
+      let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5001/", "Content-Type": "application/json"} })
+        
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-  
       let pred = await response.json()
       console.log(pred)
       this._hideLoader()
@@ -860,52 +868,19 @@ _userRemoved = (userData) => {
     })
   }
 
-  // _auth = () => {
-    
-  //   return new Promise(async (resolve, reject) => {
-
-  //     let starttime = this.props.timestamps.startTrial
-  //     let stoptime = this.props.timestamps.stopTrial
-  //     let labels = this.characterSequence
-      
-  //     let url = 'http://127.0.0.1:5001/auth'
-  //     let body = {
-  //         starttime,
-  //         stoptime,
-  //         labels
-  //     }
-
-  //     let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5001/", "Content-Type": "application/json"} })
-        
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-
-  //     let pred = await response.json()
-  //     console.log(pred)
-  //     // this._hideLoader()
-  //     // this._appendMessage(`You: ${message}`, this.colors[pred])
-  //     resolve(pred)
-
-  //   })
-  // }
-
-  _sendP300 = () => {
+  _sendLabels = () => {
     
     return new Promise(async (resolve, reject) => {
 
       let starttime = this.props.timestamps.startTrial
       let stoptime = this.props.timestamps.stopTrial
       let labels = this.characterSequence
-      let data = this.P300data
       
       let url = 'http://127.0.0.1:5000/p300'
       let body = {
           starttime,
           stoptime,
-          labels,
-          data
-
+          labels
       }
 
       let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
@@ -1011,9 +986,9 @@ _userRemoved = (userData) => {
       if(i<c) {
         
         let flash_index = new_chars[i];
+        this.characterSequence.push(flash_index)
         
         light_unlit(flash_index,1); // highlight element
-        this.characterSequence.push([flash_index, Date.now()])
         
         setTimeout(
           () => {
