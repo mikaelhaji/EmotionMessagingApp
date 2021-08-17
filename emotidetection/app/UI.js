@@ -834,7 +834,7 @@ _userRemoved = (userData) => {
       }
 
       let pred = await response.json()
-      console.log(pred)
+      // console.log(pred)
       // this._hideLoader()
       // this._appendMessage(`You: ${message}`, this.colors[pred])
       resolve(pred)
