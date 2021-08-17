@@ -98,12 +98,13 @@ init = () => {
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
       <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     </head>
-    <body>
+    <body style="background-color:rgb(204, 255, 255);">
       
       
-      <div style = "z-index: 2; position: absolute;" class: "pages" id="div1"> 
+      <div style = "width: 100%; height: 100%; background-color:rgb(204, 255, 255); z-index: 2; position: absolute;" class: "pages" id="div1"> 
 
-          <button onclick="document.getElementById('id01').style.display='block'" style='position: relative;' type="button", class="brainsatplay-default-button">Authenticate Emotiv Stream</button>
+          <h1 style="position: relative; top: 300px; left: 830px;" > Emotion300 </h1>
+          <button onclick="document.getElementById('id01').style.display='block'" style='position: relative; top: 350px; left: 750px; min-height: 200px; width: 400px; font-size: 150%; border-radius: 50px;' type="button", class="brainsatplay-default-button">Authenticate Emotiv Stream</button>
           <!-- The Modal -->
           <div id="id01" class="modal">
             <span onclick="document.getElementById('id01').style.display='none'"
@@ -142,11 +143,12 @@ init = () => {
       </div>
 
 
-      <div style = "z-index: 1; opacity: 0; position: relative;", class: "pages" id="div2" >
+      <div style = "width: 100%; height: 100%; background-color:rgb(204, 255, 255); z-index: 1; opacity: 0; position: relative;", class: "pages" id="div2" >
         
         <div id="main-div">
-        <div id="message-container"></div>
-        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          <div id="message-container"></div>
+          <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
 
         <form class="send-container" id="send-container">
           <input type="text" class="message-input" id="message-input">
@@ -156,7 +158,7 @@ init = () => {
         
         <div id="speller_matrix">
           <div id="mydiv">
-            <div id = "mydivheader"> Move Here</div>
+            <div id = "mydivheader"> Drag Matrix</div>
               <div>
                 <table>
                   <tr>
@@ -266,7 +268,7 @@ init = () => {
             console.log(this.loader)
             
             const name = prompt('What is your name?') // not necessary 
-            this._appendMessage('[ You joined ]')
+            this._appendMessage('You joined')
             // this._appendMessage('[ Authentication Required ]')
             this.socket.emit('new-user', name)
 

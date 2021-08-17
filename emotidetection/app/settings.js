@@ -2,7 +2,7 @@ import {UI} from './UI.js'
 // import {Parser} from './Parser'
 
 export const settings = {
-        name: "Emotion Detection Messaging App",
+        name: "Emotion300",
         devices: ["EEG"],
         author: "Mikky and Anmu",
         description: "Classifying interest in a messaging app",
@@ -11,10 +11,10 @@ export const settings = {
         display: {
                 "production":false
         },
-        // intro:{
-        //         title: false,
-        //         mode: 'multi'
-        // },
+        intro:{
+                // title: false,
+                mode: 'solo'
+        },
         graph: {
                 "nodes":[
                         {id: 'ui', class: UI, params: {}},
