@@ -112,8 +112,13 @@ def p300():
         pow_data = []
         data_timestamps = []
         for row in data:
-            pow_data.append(row["pow"])
-            data_timestamps.append(row["time"]*1000)
+            try:
+                pow_data.append(row["pow"])
+                data_timestamps.append(row["time"]*1000)
+            except:
+                print("probably a keyword error")
+
+        # print(pow_data)
 
         char_dataPairs = []
         for label in labels:
@@ -123,6 +128,7 @@ def p300():
             for ind, timestamp in enumerate(data_timestamps):
                 # print(timestamp)
                 if timestamp >= p300_offset and timestamp <= p300_offset+300:
+                    print("in")
                     psdMatch.append(pow_data[ind])
 
             # print(len(psdMatch))
@@ -133,7 +139,7 @@ def p300():
             else:
                 char_dataPairs.append([label[0], psdMatch[0]])
             
-        
+        print(char_dataPairs)
         inp_arr = pd.DataFrame([x[1] for x in char_dataPairs])
         print(inp_arr)
         preds = model.P300_pred(inp_arr)

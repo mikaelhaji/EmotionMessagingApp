@@ -31,6 +31,7 @@ class UI{
       this.colors = ['red', 'blue', 'green', 'yellow'],
       this.messageCount = 0,
       this.characterSequence = [], 
+      this.keyPattern = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "@", "?", "-", "[]", "XX"], 
 
       this.io = null
       this.socket = null
@@ -389,8 +390,12 @@ init = () => {
               }
 
               this.P300data = data.slice(this.startIndex, this.stopIndex)
+              console.log(this.P300data.length)
+
               this._sendP300().then((char) => {
                 console.log(char)
+                messageInput.value = messageInput.value + this.keyPattern[char-1]
+                this.characterSequence = []
               })
 
             })
