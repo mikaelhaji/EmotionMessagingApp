@@ -268,7 +268,9 @@ class UI{
               this.socket.emit('new-user', name)
 
               this.socket.on('chat-message', data => {
-              this._appendMessage(`${data.name}: ${data.message}`, data.color)
+            
+                  this._appendMessage(`${data.name}: ${data.message}`, data.color)
+              
               })
 
               this.socket.on('user-connected', name => {
@@ -288,6 +290,7 @@ class UI{
                 // console.log("done")
                 // console.log(data) // array of x size, 70 features per row, .pow = features, .time = The timestamp of this sample. 
                 //                   //It is the number of seconds that have elapsed since 00:00:00 Thursday, 1 January 1970 UTC.
+                console.log(data)
                 let indexOfSmallest = (a) => {
                   var lowest = 0;
                   for (var i = 1; i < a.length; i++) {
@@ -344,7 +347,9 @@ class UI{
                 }
 
                 this.P300data = data.slice(this.startIndex, this.stopIndex)
-                this._sendP300()
+                this._sendP300().then((char) => {
+                  console.log(char)
+                })
 
               })
 
@@ -412,14 +417,15 @@ class UI{
                 this._onMessageSendHack().then((m_color) => {
                   console.log('COLOR',m_color)
                   // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                  this.socket.emit('send-chat-message', {message: message, color: m_color})
+                  this.socket.emit('send-chat-message', {message: this.message, color: m_color})
+                  this._appendMessage(`You: ${this.message}`, m_color)
                   messageInput.value = ''
               }).catch((error) => {
                   this._hideLoader()
                   // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                  this.socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                  this.socket.emit('send-chat-message', {message: this.message} ) // this._appendMessage(`You: ${message}`)
                   alert("Error detecting your emotion: "+error)
-                  this._appendMessage(`You: ${message}`)
+                  this._appendMessage(`You: ${this.message}`)
                   messageInput.value = ''
                   return
         
@@ -452,6 +458,7 @@ class UI{
               e.preventDefault()
               this.props.timestamps.stop = Date.now()
               this.message = messageInput.value
+              console.log(messageInput.value)
               this.socket.emit('doneText')
           
               })          
@@ -764,7 +771,7 @@ _userRemoved = (userData) => {
       let pred = await response.json()
       console.log(pred)
       this._hideLoader()
-      this._appendMessage(`You: ${message}`, this.colors[pred])
+      // this._appendMessage(`You: ${message}`, this.colors[pred])
       resolve(this.colors[pred])
     })
   }
