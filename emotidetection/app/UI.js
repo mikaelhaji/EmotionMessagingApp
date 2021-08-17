@@ -340,10 +340,90 @@ class UI{
                 } else {this.startIndex = approx_start[0][0]}
 
                 if (this.startIndex < this.stopIndex) {
-                  console.log(this.startIndex, this.stopIndex)
-
-                  
+                  console.log(this.startIndex, this.stopIndex) 
                 }
+
+                this.P300data = data.slice(this.startIndex, this.stopIndex)
+                this._sendP300()
+
+              })
+
+              this.socket.on('emotionData', data => {
+                // console.log("done")
+                // console.log(data) // array of x size, 70 features per row, .pow = features, .time = The timestamp of this sample. 
+                //                   //It is the number of seconds that have elapsed since 00:00:00 Thursday, 1 January 1970 UTC.
+                let indexOfSmallest = (a) => {
+                  var lowest = 0;
+                  for (var i = 1; i < a.length; i++) {
+                    if (a[i] < a[lowest]) lowest = i;
+                  }
+                  return lowest;
+                  }
+                
+                let approx_start = []
+                let approx_end = []
+                console.log(data.length)
+                for (let i = 0; i < data.length; i++) {
+                  if (data[i].time*1000 <= this.props.timestamps.start+(1/8*1000) && data[i].time*1000 >= this.props.timestamps.start-(1/8*1000)) {
+                    console.log(data[i].time*1000, this.props.timestamps.start+(1/8*1000))
+                    approx_start.push([i, data[i].time])
+
+                  } else if (data[i].time*1000 <= this.props.timestamps.stop+(1/8*1000) && data[i].time*1000 >= this.props.timestamps.stop-(1/8*1000)) {
+                    console.log(data[i].time*1000, this.props.timestamps.stop+(1/8*1000))
+                    approx_end.push([i, data[i].time])
+                    
+                  }
+
+                }
+
+                console.log(approx_start)
+                console.log(approx_end)
+                
+                if (approx_end.length > 1) {
+                  let stamp_differences = []
+                  for (const indexTime in approx_end) {
+
+                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stop))
+                    
+                  }
+                  
+                  this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
+
+                } else {this.stopIndex = approx_end[0][0]}
+
+                if (approx_start.length > 1) {
+                  let stamp_differences = []
+                  for (const indexTime in approx_start) {
+
+                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.start))
+                    
+                  }
+                  
+                  this.startIndexEmo = approx_start[indexOfSmallest(stamp_differences)][0]
+
+                } else {this.startIndexEmo = approx_start[0][0]}
+
+                if (this.startIndexEmo < this.stopIndexEmo) {
+                  console.log(this.startIndex, this.stopIndex) 
+                }
+
+                this.emotionData = data.slice(this.startIndexEmo, this.stopIndexEmo)
+                
+                this._onMessageSendHack().then((m_color) => {
+                  console.log('COLOR',m_color)
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
+                  this.socket.emit('send-chat-message', {message: message, color: m_color})
+                  messageInput.value = ''
+              }).catch((error) => {
+                  this._hideLoader()
+                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
+                  this.socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
+                  alert("Error detecting your emotion: "+error)
+                  this._appendMessage(`You: ${message}`)
+                  messageInput.value = ''
+                  return
+        
+                  })
 
               })
 
@@ -370,22 +450,9 @@ class UI{
 
             messageForm.addEventListener('submit', e => {
               e.preventDefault()
-              const message = messageInput2.value
-              this._onMessageSend(message).then((m_color) => {
-                  console.log('COLOR',m_color)
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                  this.socket.emit('send-chat-message', {message: message, color: m_color})
-                  messageInput2.value = ''
-              }).catch((error) => {
-                  this._hideLoader()
-                  // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                  this.socket.emit('send-chat-message', {message: message} ) // this._appendMessage(`You: ${message}`)
-                  alert("Error detecting your emotion: "+error)
-                  this._appendMessage(`You: ${message}`)
-                  messageInput2.value = ''
-                  return
-        
-                  })
+              this.props.timestamps.stop = Date.now()
+              this.message = messageInput.value
+              this.socket.emit('doneText')
           
               })          
             
@@ -643,49 +710,111 @@ _userRemoved = (userData) => {
     })
   }
 
-  _auth = () => {
-    
+  _onMessageSendHack = (message) => {
+
     return new Promise(async (resolve, reject) => {
 
-      let starttime = this.props.timestamps.startTrial
-      let stoptime = this.props.timestamps.stopTrial
-      let labels = this.characterSequence
-      
-      let url = 'http://127.0.0.1:5001/auth'
-      let body = {
-          starttime,
-          stoptime,
-          labels
-      }
+       this._showLoader()
 
-      let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5001/", "Content-Type": "application/json"} })
-        
+       let finalData = this.emotionData
+
+      //  console.log(finalData[0].length)
+
+       if (finalData.length == 0) {
+        this._hideLoader()
+        reject("We are still collecting data, no emotion detected")
+       }
+
+      // data.forEach((item, index, array) => {
+      //   console.log(array)
+      // })
+
+       let url = 'http://127.0.0.1:5000/emotionshack'
+       let body = {
+           finalData,
+       }
+
+       // Send to server
+      //  fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+      // .then(response => response.json())
+      // .then(emotion => {
+
+      //      // Get Video Back
+      //      console.log(emotion)
+      //      this._hideLoader()
+      //      this._appendMessage(`You: ${message}`, this.colors[emotion])
+      //      return await this.colors[emotion]
+           
+      //      // Display Video
+           
+      //  }).catch((error) => {
+      //   this._hideLoader()
+      //   this._appendMessage(`You: ${message}`)
+      //   alert("Error detecting your emotion: "+error)
+      //   return
+
+      //  });
+      let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+  
       let pred = await response.json()
       console.log(pred)
-      // this._hideLoader()
-      // this._appendMessage(`You: ${message}`, this.colors[pred])
-      resolve(pred)
-
+      this._hideLoader()
+      this._appendMessage(`You: ${message}`, this.colors[pred])
+      resolve(this.colors[pred])
     })
   }
 
-  _sendLabels = () => {
+  // _auth = () => {
+    
+  //   return new Promise(async (resolve, reject) => {
+
+  //     let starttime = this.props.timestamps.startTrial
+  //     let stoptime = this.props.timestamps.stopTrial
+  //     let labels = this.characterSequence
+      
+  //     let url = 'http://127.0.0.1:5001/auth'
+  //     let body = {
+  //         starttime,
+  //         stoptime,
+  //         labels
+  //     }
+
+  //     let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5001/", "Content-Type": "application/json"} })
+        
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+
+  //     let pred = await response.json()
+  //     console.log(pred)
+  //     // this._hideLoader()
+  //     // this._appendMessage(`You: ${message}`, this.colors[pred])
+  //     resolve(pred)
+
+  //   })
+  // }
+
+  _sendP300 = () => {
     
     return new Promise(async (resolve, reject) => {
 
       let starttime = this.props.timestamps.startTrial
       let stoptime = this.props.timestamps.stopTrial
       let labels = this.characterSequence
+      let data = this.P300data
       
       let url = 'http://127.0.0.1:5000/p300'
       let body = {
           starttime,
           stoptime,
-          labels
+          labels,
+          data
+
       }
 
       let response = await fetch(url, {method: 'POST', body: JSON.stringify(body), headers: {"Access-Control-Allow-Origin": "http://127.0.0.1:5000/", "Content-Type": "application/json"} })
@@ -791,9 +920,9 @@ _userRemoved = (userData) => {
       if(i<c) {
         
         let flash_index = new_chars[i];
-        this.characterSequence.push(flash_index)
         
         light_unlit(flash_index,1); // highlight element
+        this.characterSequence.push([flash_index, Date.now()])
         
         setTimeout(
           () => {

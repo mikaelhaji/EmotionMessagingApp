@@ -20,3 +20,28 @@ def gen_predict(outputArr, elec_count):
         preds = mode(preds.tolist())
 
     return preds 
+
+def P300_pred(inp_arr):
+
+    temp = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
+    learner = load_learner("pyProcessing\models\hackathonp300model (1).pkl")
+    dl = learner.dls.test_dl(inp_arr)
+    onehotencoded, _, preds = learner.get_preds(dl=dl, with_decoded=True)
+    pathlib.PosixPath = temp
+    if type(preds) == Tensor:
+        preds = preds.tolist()
+    
+    return preds 
+
+def emotiv_pred(inp_arr):
+    temp = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
+    learner = load_learner("pyProcessing\models\hackgoatedbabes.pkl")
+    dl = learner.dls.test_dl(inp_arr)
+    onehotencoded, _, preds = learner.get_preds(dl=dl, with_decoded=True)
+    pathlib.PosixPath = temp
+    if type(preds) == Tensor:
+        preds = mode(preds.tolist())
+    
+    return preds 
