@@ -72,12 +72,24 @@ def pred_servehack():
 
         # print(request_data)
 
-        data = [row["pow"] for row in request_data["finalData"]]
+        # data = [row["pow"] for row in request_data["finalData"]]
+        data = []
+        for row in request_data["finalData"]:
+            try:
+                data.append(row["pow"])
+            except:
+                print("probably a keyword error")
+
+        print(len(data))
+
         batches = []
         for x in range(int(len(data)/40)):
             batches.append(np.mean(data[x*40:x*40+40], axis=0))
 
-        preds = model.emotiv_pred(pd.DataFrame(batches))
+        df_batches = pd.DataFrame(batches)
+        print(df_batches)
+
+        preds = model.emotiv_pred(df_batches)
 
         if type(preds) == list:
             preds = mode(preds)

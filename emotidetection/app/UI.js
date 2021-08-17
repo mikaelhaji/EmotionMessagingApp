@@ -321,29 +321,69 @@ class UI{
                 console.log(approx_start)
                 console.log(approx_end)
                 
-                if (approx_end.length > 1) {
-                  let stamp_differences = []
-                  for (const indexTime in approx_end) {
-
-                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stopTrial))
-                    
-                  }
+                try{
                   
-                  this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
-
-                } else {this.stopIndex = approx_end[0][0]}
-
-                if (approx_start.length > 1) {
-                  let stamp_differences = []
-                  for (const indexTime in approx_start) {
-
-                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.startTrial))
+                  if (approx_end.length > 1) {
+                    let stamp_differences = []
+                    for (const indexTime in approx_end) {
+  
+                      stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stopTrial))
+                      
+                    }
                     
-                  }
-                  
-                  this.startIndex = approx_start[indexOfSmallest(stamp_differences)][0]
+                    this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
+  
+                  } else {this.stopIndex = approx_end[0][0]}
 
-                } else {this.startIndex = approx_start[0][0]}
+                } catch(err) {
+
+                  this.stopIndex = data.length
+
+                }
+
+                // if (approx_end.length > 1) {
+                //   let stamp_differences = []
+                //   for (const indexTime in approx_end) {
+
+                //     stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stopTrial))
+                    
+                //   }
+                  
+                //   this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
+
+                // } else {this.stopIndex = approx_end[0][0]}
+
+                try {
+
+                  if (approx_start.length > 1) {
+                    let stamp_differences = []
+                    for (const indexTime in approx_start) {
+  
+                      stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.startTrial))
+                      
+                    }
+                    
+                    this.startIndex = approx_start[indexOfSmallest(stamp_differences)][0]
+  
+                  } else {this.startIndex = approx_start[0][0]}
+  
+                } catch(err) {
+
+                  this.startIndex = 0
+
+                }
+
+                // if (approx_start.length > 1) {
+                //   let stamp_differences = []
+                //   for (const indexTime in approx_start) {
+
+                //     stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.startTrial))
+                    
+                //   }
+                  
+                //   this.startIndex = approx_start[indexOfSmallest(stamp_differences)][0]
+
+                // } else {this.startIndex = approx_start[0][0]}
 
                 if (this.startIndex < this.stopIndex) {
                   console.log(this.startIndex, this.stopIndex) 
@@ -360,6 +400,7 @@ class UI{
                 // console.log("done")
                 // console.log(data) // array of x size, 70 features per row, .pow = features, .time = The timestamp of this sample. 
                 //                   //It is the number of seconds that have elapsed since 00:00:00 Thursday, 1 January 1970 UTC.
+                console.log(data)
                 let indexOfSmallest = (a) => {
                   var lowest = 0;
                   for (var i = 1; i < a.length; i++) {
@@ -372,7 +413,7 @@ class UI{
                 let approx_end = []
                 console.log(data.length)
                 for (let i = 0; i < data.length; i++) {
-                  if (data[i].time*1000 <= this.props.timestamps.start+(1/8*1000) && data[i].time*1000 >= this.props.timestamps.start-(1/8*1000)) {
+                  if (data[i].time*1000 <= this.props.timestamps.start+(1/8*1000)-5*1000 && data[i].time*1000 >= this.props.timestamps.start-(1/8*1000)-5*1000) {
                     console.log(data[i].time*1000, this.props.timestamps.start+(1/8*1000))
                     approx_start.push([i, data[i].time])
 
@@ -386,33 +427,73 @@ class UI{
 
                 console.log(approx_start)
                 console.log(approx_end)
+
+                try {
+
+                  if (approx_end.length > 1) {
+                    let stamp_differences = []
+                    for (const indexTime in approx_end) {
+  
+                      stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stop))
+                      
+                    }
+                    
+                    this.stopIndexEmo = approx_end[indexOfSmallest(stamp_differences)][0]
+  
+                  } else {this.stopIndexEmo = approx_end[0][0]}
+
+                } catch(err) {
+
+                  this.stopIndexEmo = data.length
+
+                }
                 
-                if (approx_end.length > 1) {
-                  let stamp_differences = []
-                  for (const indexTime in approx_end) {
+                // if (approx_end.length > 1) {
+                //   let stamp_differences = []
+                //   for (const indexTime in approx_end) {
 
-                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stop))
+                //     stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.stop))
                     
-                  }
+                //   }
                   
-                  this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
+                //   this.stopIndex = approx_end[indexOfSmallest(stamp_differences)][0]
 
-                } else {this.stopIndex = approx_end[0][0]}
+                // } else {this.stopIndex = approx_end[0][0]}
 
-                if (approx_start.length > 1) {
-                  let stamp_differences = []
-                  for (const indexTime in approx_start) {
+                try {
 
-                    stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.start))
+                  if (approx_start.length > 1) {
+                    let stamp_differences = []
+                    for (const indexTime in approx_start) {
+  
+                      stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.start))
+                      
+                    }
                     
-                  }
-                  
-                  this.startIndexEmo = approx_start[indexOfSmallest(stamp_differences)][0]
+                    this.startIndexEmo = approx_start[indexOfSmallest(stamp_differences)][0]
+  
+                  } else {this.startIndexEmo = approx_start[0][0]}
 
-                } else {this.startIndexEmo = approx_start[0][0]}
+                } catch(err) {
+
+                  this.startIndexEmo = 0
+
+                }
+
+                // if (approx_start.length > 1) {
+                //   let stamp_differences = []
+                //   for (const indexTime in approx_start) {
+
+                //     stamp_differences.push(Math.abs(indexTime[0]*1000-this.props.timestamps.start))
+                    
+                //   }
+                  
+                //   this.startIndexEmo = approx_start[indexOfSmallest(stamp_differences)][0]
+
+                // } else {this.startIndexEmo = approx_start[0][0]}
 
                 if (this.startIndexEmo < this.stopIndexEmo) {
-                  console.log(this.startIndex, this.stopIndex) 
+                  console.log(this.startIndexEmo, this.stopIndexEmo) 
                 }
 
                 this.emotionData = data.slice(this.startIndexEmo, this.stopIndexEmo)
@@ -728,9 +809,9 @@ _userRemoved = (userData) => {
 
        let finalData = this.emotionData
 
-      //  console.log(finalData[0].length)
+       console.log(finalData.length)
 
-       if (finalData.length == 0) {
+       if (finalData.length < 40) {
         this._hideLoader()
         reject("We are still collecting data, no emotion detected")
        }
