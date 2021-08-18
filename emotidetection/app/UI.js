@@ -22,11 +22,14 @@ class UI{
           },
       }
 
+    this.usernames = {}
+
     this.pages = {
         div1: null,
         div2: null,
         currdiv: null
     }
+
 
       this.colors = ['red', 'blue', 'green', 'yellow'],
       this.messageCount = 0,
@@ -38,32 +41,26 @@ class UI{
 
       // Port Definition
       this.ports = {
-          // message: {
-          //   default: {message:'connected'},
-          //   input: {type: undefined},
-          //   output: {type: 'object'},
-          //   onUpdate: (userData) => {
-          //     return userData
-          //   }
-          // },
-          // onmessage: {
-          //   input: {type: 'object'},
-          //   output: {type: null},
-          //   onUpdate: (userData) => {
-          //     userData.forEach(u => {
-          //       if (u.data.message === 'connected'){
-
-          //         console.log(this.session.info)
-          //         if (u.id == this.session.info.auth.id) this.messageContainer.innerHTML = ''
-
-          //         this._appendMessage(`${u.username} connected`)
-          //       } else {
-          //         this._appendMessage(`${u.username}: ${u.data.message}`, u.data.color)
-          //       }
+          message: {
+            // default: {message:'connected'},
+            input: {type: undefined},
+            output: {type: 'object'},
+            onUpdate: (userData) => {
+              return userData
+            }
+          },
+          onmessage: {
+            input: {type: 'object'},
+            output: {type: null},
+            onUpdate: (userData) => {
+              userData.forEach(u => {
+            
+                  this._appendMessage(`${u.username}: ${u.data.message}`, u.data.color)
+                
         
-          //     })
-          //   }
-          // }
+              })
+            }
+          }
       }
   }
 
@@ -267,25 +264,25 @@ init = () => {
             this.loader = document.getElementsByClassName('lds-roller')[0]
             console.log(this.loader)
             
-            const name = prompt('What is your name?') // not necessary 
-            this._appendMessage('You joined')
-            // this._appendMessage('[ Authentication Required ]')
-            this.socket.emit('new-user', name)
-
-            this.socket.on('chat-message', data => {
-          
-                this._appendMessage(`${data.name}: ${data.message}`, data.color)
+            // this.name = prompt('What is your name?') // not necessary 
             
-            })
+            // this._appendMessage('[ Authentication Required ]')
+            // this.socket.emit('new-user', name)
 
-            this.socket.on('user-connected', name => {
-            // console.log(name)
-            this._appendMessage(`[ ${name} connected ]`)
-            })
+            // this.socket.on('chat-message', data => {
+          
+            //     this._appendMessage(`${data.name}: ${data.message}`, data.color)
+            
+            // })
 
-            this.socket.on('user-disconnected', name => {
-            this._appendMessage(`[ ${name} disconnected ]`)
-            })
+            // this.socket.on('user-connected', name => {
+            // // console.log(name)
+            // this._appendMessage(`[ ${name} connected ]`)
+            // })
+
+            // this.socket.on('user-disconnected', name => {
+            // this._appendMessage(`[ ${name} disconnected ]`)
+            // })
 
             this.socket.on('succesful-connection', e => {
               this._setOpacity(this.pages.div1, this.pages.div2)
@@ -506,16 +503,16 @@ init = () => {
               
               this._onMessageSendHack().then((m_color) => {
                 console.log('COLOR',m_color)
-                // this.session.graph.runSafe(this, 'message', [{data: {message, color: m_color}}])
-                this.socket.emit('send-chat-message', {message: this.message, color: m_color})
-                this._appendMessage(`You: ${this.message}`, m_color)
+                this.session.graph.runSafe(this, 'message', [{data: {message: this.message, color: m_color}}])
+                // this.socket.emit('send-chat-message', {message: this.message, color: m_color})
+                // this._appendMessage(`You: ${this.message}`, m_color)
                 messageInput.value = ''
             }).catch((error) => {
                 this._hideLoader()
-                // this.session.graph.runSafe(this, 'message', [{data: {message, color: "grey"}}])
-                this.socket.emit('send-chat-message', {message: this.message} ) // this._appendMessage(`You: ${message}`)
+                this.session.graph.runSafe(this, 'message', [{data: {message: this.message, color: "grey"}}])
+                // this.socket.emit('send-chat-message', {message: this.message} ) // this._appendMessage(`You: ${message}`)
                 alert("Error detecting your emotion: "+error)
-                this._appendMessage(`You: ${this.message}`)
+                // this._appendMessage(`You: ${this.message}`)
                 messageInput.value = ''
                 return
       
@@ -648,8 +645,20 @@ closeDragElement = () => {
 
 
 _userAdded = (userData) => {
+
   let u = userData[0]
+  console.log(this.session.info)
+  if (u.id == this.session.info.auth.id) this.messageContainer.innerHTML = ''
+
+  this.usernames[u.id] = u.username
   console.log(u)
+
+  if (this.session.info.auth.id === u.id) {
+    this._appendMessage("You connected")
+  } else {
+    this._appendMessage(`${u.username} connected`)
+  }
+
   // this.props.readouts.innerHTML += `<p id="${this.props.id}-${u.id}" class="readout" >${u.username}: ${u.data ?? ''}</p>`
   // _appendMessage because userconnected has already been broadcasted, no need to runsafe
 
@@ -658,6 +667,10 @@ _userAdded = (userData) => {
 _userRemoved = (userData) => {
   let u = userData[0]
   console.log(u)
+
+  // index a map of user names based on id 
+  
+  this._appendMessage(`[ ${this.usernames[u.id]} disconnected ]`)
   // let readout = document.getElementById(`${this.props.id}-${u.id}`)
   // readout.remove()
   // _appendMessage

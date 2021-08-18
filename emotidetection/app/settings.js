@@ -12,43 +12,44 @@ export const settings = {
                 "production":false
         },
         intro:{
-                // title: false,
-                mode: 'solo'
+                title: false,
+                mode: 'multi'
         },
         graph: {
                 "nodes":[
                         {id: 'ui', class: UI, params: {}},
-                        // {id:'brainstorm', class: brainsatplay.plugins.networking.Brainstorm, params: {
+                        {id:'brainstorm', class: brainsatplay.plugins.networking.Brainstorm, params: {
                                 
-                        //         onUserConnected: (u) => {
-                        //                 let UI = settings.graph.nodes.find(n => n.id === 'ui')
-                        //                 UI.instance._userAdded(u)
-                        //                 },
+                                onUserConnected: (u) => {
+                                        console.log("connected")
+                                        let UI = settings.graph.nodes.find(n => n.id === 'ui')
+                                        UI.instance._userAdded(u)
+                                        },
                                         
-                        //         onUserDisconnected: (u) => {
-                        //         let UI = settings.graph.nodes.find(n => n.id === 'ui')
-                        //         UI.instance._userRemoved(u)
-                        //         },
-                        // }},
+                                onUserDisconnected: (u) => {
+                                        let UI = settings.graph.nodes.find(n => n.id === 'ui')
+                                        UI.instance._userRemoved(u)
+                                },
+                        }},
                         // {id: 'parser', class: Parser, params: {}}
                 ],
                 "edges": [
-                // {
-                //         source: 'ui:message',
-                //         target: 'brainstorm'
-                // },
-                // {
-                //        source: 'brainstorm:ui_message',
-                // //        source: 'brainstorm:message',
+                {
+                        source: 'ui:message',
+                        target: 'brainstorm'
+                },
+                {
+                       source: 'brainstorm:ui_message',
+                //        source: 'brainstorm:message',
 
 
-                //        target: 'ui:onmessage'
+                       target: 'ui:onmessage'
 
-                // },
-                // {
-                //         source: 'ui:message',
-                //         target: 'ui:onmessage'
-                // }
+                },
+                {
+                        source: 'ui:message',
+                        target: 'ui:onmessage'
+                }
         ]
         },
         // editor: {
