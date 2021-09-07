@@ -46,10 +46,10 @@ export const settings = {
                        target: 'ui:onmessage'
 
                 },
-                {
-                        source: 'ui:message',
-                        target: 'ui:onmessage'
-                }
+                // {
+                //         source: 'ui:message',
+                //         target: 'ui:onmessage'
+                // }
         ]
         },
         // editor: {

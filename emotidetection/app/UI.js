@@ -41,6 +41,10 @@ class UI{
 
       // Port Definition
       this.ports = {
+          defaults: {
+            input: {type: undefined},
+            output: {type: undefined}
+          },
           message: {
             // default: {message:'connected'},
             input: {type: undefined},

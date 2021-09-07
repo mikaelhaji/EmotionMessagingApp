@@ -380,6 +380,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     socket.broadcast.emit('user-disconnected', users[socket.id])
     delete users[socket.id]
+    delete c[socket.id]
   })
   socket.on('auth', (authinfo) => {
 
